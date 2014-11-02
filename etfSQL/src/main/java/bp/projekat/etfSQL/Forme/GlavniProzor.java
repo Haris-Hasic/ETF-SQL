@@ -141,17 +141,17 @@ public class GlavniProzor {
 		
 		JButton btnRollback = new JButton("Rollback");
 		btnRollback.setFont(new Font("Arial", Font.PLAIN, 11));
-		btnRollback.setBounds(559, 86, 115, 63);
+		btnRollback.setBounds(539, 86, 133, 63);
 		panel.add(btnRollback);
 		
 		JButton btnCreateSavepoint = new JButton("Create Savepoint");
 		btnCreateSavepoint.setFont(new Font("Arial", Font.PLAIN, 11));
-		btnCreateSavepoint.setBounds(434, 86, 115, 63);
+		btnCreateSavepoint.setBounds(398, 87, 131, 63);
 		panel.add(btnCreateSavepoint);
 		
 		JButton button_2 = new JButton("Commit");
 		button_2.setFont(new Font("Arial", Font.PLAIN, 11));
-		button_2.setBounds(309, 86, 115, 63);
+		button_2.setBounds(257, 87, 131, 63);
 		panel.add(button_2);
 	}
 }
