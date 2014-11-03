@@ -21,6 +21,8 @@ import java.awt.SystemColor;
 
 import javax.swing.JMenuItem;
 
+import bp.projekat.etfSQL.Baza.Konekcija;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -72,10 +74,17 @@ public class GlavniProzor {
 		textPane.setBounds(14, 161, 660, 255);
 		panel.add(textPane);
 		
-		JButton btnNewButton = new JButton("Execute");
-		btnNewButton.setFont(new Font("Arial", Font.PLAIN, 11));
-		btnNewButton.setBounds(595, 428, 79, 23);
-		panel.add(btnNewButton);
+		JButton executeButton = new JButton("Execute");
+		executeButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				
+				
+			}
+		});
+		executeButton.setFont(new Font("Arial", Font.PLAIN, 11));
+		executeButton.setBounds(595, 428, 79, 23);
+		panel.add(executeButton);
 		
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setFont(new Font("Arial", Font.PLAIN, 12));
