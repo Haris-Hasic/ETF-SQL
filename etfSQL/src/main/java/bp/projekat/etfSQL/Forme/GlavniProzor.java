@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import java.awt.Toolkit;
 import java.awt.BorderLayout;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
 import javax.swing.JButton;
@@ -23,14 +24,21 @@ import javax.swing.JMenuItem;
 
 import bp.projekat.etfSQL.Baza.Konekcija;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import javax.swing.JTable;
 
 public class GlavniProzor {
 
 	private JFrame frmEtfSql;
 	private final JTextPane textPane = new JTextPane();
 	private JTextField textField;
+	private JTable table;
+	
+	private Konekcija kon;
 
 	/**
 	 * Launch the application.
@@ -59,6 +67,8 @@ public class GlavniProzor {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		kon = null;
+		
 		frmEtfSql = new JFrame();
 		frmEtfSql.setResizable(false);
 		frmEtfSql.setTitle("ETF SQL");
@@ -71,7 +81,7 @@ public class GlavniProzor {
 		JPanel panel = new JPanel();
 		frmEtfSql.getContentPane().add(panel, BorderLayout.CENTER);
 		panel.setLayout(null);
-		textPane.setBounds(14, 161, 660, 255);
+		textPane.setBounds(14, 98, 660, 219);
 		panel.add(textPane);
 		
 		JButton executeButton = new JButton("Execute");
@@ -83,12 +93,12 @@ public class GlavniProzor {
 			}
 		});
 		executeButton.setFont(new Font("Arial", Font.PLAIN, 11));
-		executeButton.setBounds(595, 428, 79, 23);
+		executeButton.setBounds(595, 328, 79, 23);
 		panel.add(executeButton);
 		
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setFont(new Font("Arial", Font.PLAIN, 12));
-		menuBar.setBounds(0, 0, 684, 21);
+		menuBar.setBounds(0, 0, 697, 21);
 		panel.add(menuBar);
 		
 		JMenu mnFile = new JMenu("File");
@@ -119,10 +129,30 @@ public class GlavniProzor {
 		mntmConnect.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				
+				try {
+					kon.connect();
+					JOptionPane.showMessageDialog(null, "Konektovan");
+				}
+				catch(Exception e) {
+					JOptionPane.showMessageDialog(null, e.getMessage());
+				}
 
 			}
 		});
+		
+		mntmConnect.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					kon.connect();
+					JOptionPane.showMessageDialog(null, "Konektovan");
+				}
+				catch(Exception ex) {
+					JOptionPane.showMessageDialog(null, ex.getMessage());
+				}
+
+			}
+		});
+		
 		mntmConnect.setFont(new Font("Arial", Font.PLAIN, 12));
 		mnSession.add(mntmConnect);
 		
@@ -144,23 +174,28 @@ public class GlavniProzor {
 		
 		textField = new JTextField();
 		textField.setBackground(SystemColor.menu);
-		textField.setBounds(14, 429, 571, 20);
+		textField.setBounds(14, 328, 571, 20);
 		panel.add(textField);
 		textField.setColumns(10);
+		textField.setVisible(false);
 		
 		JButton btnRollback = new JButton("Rollback");
 		btnRollback.setFont(new Font("Arial", Font.PLAIN, 11));
-		btnRollback.setBounds(539, 86, 133, 63);
+		btnRollback.setBounds(580, 32, 94, 47);
 		panel.add(btnRollback);
 		
 		JButton btnCreateSavepoint = new JButton("Create Savepoint");
 		btnCreateSavepoint.setFont(new Font("Arial", Font.PLAIN, 11));
-		btnCreateSavepoint.setBounds(398, 87, 131, 63);
+		btnCreateSavepoint.setBounds(443, 32, 127, 47);
 		panel.add(btnCreateSavepoint);
 		
 		JButton button_2 = new JButton("Commit");
 		button_2.setFont(new Font("Arial", Font.PLAIN, 11));
-		button_2.setBounds(257, 87, 131, 63);
+		button_2.setBounds(346, 32, 87, 47);
 		panel.add(button_2);
+		
+		table = new JTable();
+		table.setBounds(14, 365, 660, 95);
+		panel.add(table);
 	}
 }
