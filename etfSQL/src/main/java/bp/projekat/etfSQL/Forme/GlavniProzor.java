@@ -9,6 +9,7 @@ import java.awt.BorderLayout;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.JButton;
 import javax.swing.JMenuBar;
@@ -23,20 +24,30 @@ import java.awt.SystemColor;
 import javax.swing.JMenuItem;
 
 import bp.projekat.etfSQL.Baza.Konekcija;
+import bp.projekat.etfSQL.Klase.ListTableModel;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 import javax.swing.JTable;
+
+import java.awt.ScrollPane;
+import java.awt.Scrollbar;
+import java.awt.Color;
 
 public class GlavniProzor {
 
 	private JFrame frmEtfSql;
-	private final JTextPane textPane = new JTextPane();
-	private JTextField textField;
-	private JTable table;
+	private final JTextPane queryTB = new JTextPane();
+	private JTextField statusTB;
+	private JTable rezultatTable;
 	
 	private Konekcija kon;
 
@@ -73,7 +84,7 @@ public class GlavniProzor {
 		frmEtfSql.setResizable(false);
 		frmEtfSql.setTitle("ETF SQL");
 		frmEtfSql.setIconImage(Toolkit.getDefaultToolkit().getImage(GlavniProzor.class.getResource("/bp/projekat/etfSQL/Resursi/ETF-Logo.gif")));
-		frmEtfSql.setBounds(100, 100, 703, 500);
+		frmEtfSql.setBounds(100, 100, 693, 402);
 		frmEtfSql.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		frmEtfSql.getContentPane().setLayout(new BorderLayout(0, 0));
@@ -81,19 +92,13 @@ public class GlavniProzor {
 		JPanel panel = new JPanel();
 		frmEtfSql.getContentPane().add(panel, BorderLayout.CENTER);
 		panel.setLayout(null);
-		textPane.setBounds(14, 98, 660, 219);
-		panel.add(textPane);
+		queryTB.setBounds(14, 74, 660, 103);
+		panel.add(queryTB);
 		
 		JButton executeButton = new JButton("Execute");
-		executeButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				
-				
-			}
-		});
+
 		executeButton.setFont(new Font("Arial", Font.PLAIN, 11));
-		executeButton.setBounds(595, 328, 79, 23);
+		executeButton.setBounds(595, 188, 79, 31);
 		panel.add(executeButton);
 		
 		JMenuBar menuBar = new JMenuBar();
@@ -126,25 +131,13 @@ public class GlavniProzor {
 		menuBar.add(mnSession);
 		
 		JMenuItem mntmConnect = new JMenuItem("Connect...");
-		mntmConnect.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				try {
-					kon.connect();
-					JOptionPane.showMessageDialog(null, "Konektovan");
-				}
-				catch(Exception e) {
-					JOptionPane.showMessageDialog(null, e.getMessage());
-				}
-
-			}
-		});
 		
 		mntmConnect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					kon.connect();
-					JOptionPane.showMessageDialog(null, "Konektovan");
+					kon = new Konekcija(); // e moj Dejo, a inicijalizirat objekat konekcije nekad aa ???
+					kon.Connect();
+					JOptionPane.showMessageDialog(null, "Uspješno ste konektovani !");
 				}
 				catch(Exception ex) {
 					JOptionPane.showMessageDialog(null, ex.getMessage());
@@ -155,6 +148,23 @@ public class GlavniProzor {
 		
 		mntmConnect.setFont(new Font("Arial", Font.PLAIN, 12));
 		mnSession.add(mntmConnect);
+		
+		JMenuItem mntmDisconnect = new JMenuItem("Disconnect");
+		mntmDisconnect.setFont(new Font("Arial", Font.PLAIN, 12));
+		mntmDisconnect.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				try {
+					
+					kon.Disconnect();
+					JOptionPane.showMessageDialog(null, "Uspješno ste diskonektovani !");
+				}
+				catch(Exception ex) {
+					JOptionPane.showMessageDialog(null, ex.getMessage());
+				}
+			}
+		});
+		mnSession.add(mntmDisconnect);
 		
 		JMenu mnScript = new JMenu("Script");
 		mnScript.setFont(new Font("Arial", Font.PLAIN, 12));
@@ -172,30 +182,68 @@ public class GlavniProzor {
 		mnHelp.setFont(new Font("Arial", Font.PLAIN, 12));
 		menuBar.add(mnHelp);
 		
-		textField = new JTextField();
-		textField.setBackground(SystemColor.menu);
-		textField.setBounds(14, 328, 571, 20);
-		panel.add(textField);
-		textField.setColumns(10);
-		textField.setVisible(false);
+		statusTB = new JTextField();
+		statusTB.setForeground(Color.RED);
+		statusTB.setFont(new Font("Arial", Font.PLAIN, 11));
+		statusTB.setBackground(SystemColor.menu);
+		statusTB.setBounds(14, 341, 660, 20);
+		panel.add(statusTB);
+		statusTB.setColumns(10);
 		
 		JButton btnRollback = new JButton("Rollback");
 		btnRollback.setFont(new Font("Arial", Font.PLAIN, 11));
-		btnRollback.setBounds(580, 32, 94, 47);
+		btnRollback.setBounds(580, 32, 94, 31);
 		panel.add(btnRollback);
 		
 		JButton btnCreateSavepoint = new JButton("Create Savepoint");
 		btnCreateSavepoint.setFont(new Font("Arial", Font.PLAIN, 11));
-		btnCreateSavepoint.setBounds(443, 32, 127, 47);
+		btnCreateSavepoint.setBounds(443, 32, 127, 31);
 		panel.add(btnCreateSavepoint);
 		
 		JButton button_2 = new JButton("Commit");
 		button_2.setFont(new Font("Arial", Font.PLAIN, 11));
-		button_2.setBounds(346, 32, 87, 47);
+		button_2.setBounds(346, 32, 87, 31);
 		panel.add(button_2);
 		
-		table = new JTable();
-		table.setBounds(14, 365, 660, 95);
-		panel.add(table);
+		rezultatTable = new JTable();
+		rezultatTable.setBounds(-15, 32, 660, 95);
+		
+		ScrollPane scrollPane = new ScrollPane();
+		scrollPane.setBounds(14, 235, 660, 95);
+		panel.add(scrollPane);
+		
+		scrollPane.add(rezultatTable);
+		
+		executeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				try {
+					
+					Class.forName("com.mysql.jdbc.Driver");
+					Connection c = DriverManager.getConnection("jdbc:mysql://localhost:3306/bazafdss", "root", "");
+					//kon = new Konekcija();
+					
+					String s = queryTB.getText();
+					PreparedStatement ps = c.prepareStatement(s);
+					
+					Statement st = c.createStatement();
+					ResultSet rs = st.executeQuery(s);
+
+					ListTableModel modelTabele = ListTableModel.createModelFromResultSet(rs);
+					rezultatTable.setModel(modelTabele);
+					
+					int i = 0;
+					
+					while(rs.next())
+						i++;
+					
+					statusTB.setText(i + " rows fetched.");
+					
+				}
+				catch(Exception e) {
+					JOptionPane.showMessageDialog(null, e.getMessage());
+				}
+			}
+		});
 	}
 }
