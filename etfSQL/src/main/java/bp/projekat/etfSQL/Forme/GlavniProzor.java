@@ -34,6 +34,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 import javax.swing.JTable;
@@ -92,6 +93,7 @@ public class GlavniProzor {
 		JPanel panel = new JPanel();
 		frmEtfSql.getContentPane().add(panel, BorderLayout.CENTER);
 		panel.setLayout(null);
+		queryTB.setFont(new Font("Arial", Font.PLAIN, 14));
 		queryTB.setBounds(14, 74, 660, 103);
 		panel.add(queryTB);
 		
@@ -135,7 +137,8 @@ public class GlavniProzor {
 		mntmConnect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					kon = new Konekcija(); // e moj Dejo, a inicijalizirat objekat konekcije nekad aa ???
+					kon = new Konekcija();
+					kon.LoadDriver();
 					kon.Connect();
 					JOptionPane.showMessageDialog(null, "Uspješno ste konektovani !");
 				}
@@ -218,26 +221,12 @@ public class GlavniProzor {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				try {
-					
-					Class.forName("com.mysql.jdbc.Driver");
-					Connection c = DriverManager.getConnection("jdbc:mysql://localhost:3306/bazafdss", "root", "");
-					//kon = new Konekcija();
-					
+															
 					String s = queryTB.getText();
-					PreparedStatement ps = c.prepareStatement(s);
-					
-					Statement st = c.createStatement();
-					ResultSet rs = st.executeQuery(s);
-
-					ListTableModel modelTabele = ListTableModel.createModelFromResultSet(rs);
-					rezultatTable.setModel(modelTabele);
-					
-					int i = 0;
-					
-					while(rs.next())
-						i++;
-					
-					statusTB.setText(i + " rows fetched.");
+					ResultSet rs = kon.createResultSet(s);
+					int br = brojRedova(rs);
+					prikaziUTabeli(rs);
+					statusTB.setText(br + " rows fetched.");
 					
 				}
 				catch(Exception e) {
@@ -245,5 +234,16 @@ public class GlavniProzor {
 				}
 			}
 		});
+	}
+	
+	public void prikaziUTabeli(ResultSet rs) throws SQLException {
+		
+		ListTableModel modelTabele = ListTableModel.createModelFromResultSet(rs);
+		rezultatTable.setModel(modelTabele);
+	}
+	
+	public int brojRedova(ResultSet rs) throws SQLException {
+		
+		return rs.getFetchSize();
 	}
 }

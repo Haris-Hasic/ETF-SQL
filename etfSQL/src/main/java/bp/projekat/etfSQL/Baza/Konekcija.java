@@ -19,7 +19,7 @@ public class Konekcija {
 	static String driverOld = "com.mysql.jdbc.Driver";                   // Drajver za konekciju - alternativni
 	static String urlTest2 = "jdbc:mysql://localhost:3306/Test2";        // URL za jednu konekciju
 	static String urlOld = "jdbc:mysql://localhost:3306/urls1";          // Drugi URL
-	static String url = "jdbc:mysql://localhost:3306/bazafdss";               // Treci URL
+	static String url = "jdbc:mysql://localhost:3306/data_vision_db";               // Treci URL
 
 	                                                                     // Podaci potrebni za napredni oblik konekcija na BP
 	protected int dbConnectionsMinCount = 4;                             // Minimalan broj konekcija na BP
@@ -42,11 +42,6 @@ public class Konekcija {
 		}
 	}
 	
-	public Konekcija() {
-		
-		
-	}
-	
 	public void Connect() {
 		try {
 			konekcija = DriverManager.getConnection(url, korisnik, sifra);
@@ -61,6 +56,11 @@ public class Konekcija {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public Connection returnConnection() {
+		
+		return konekcija;
 	}
 	
 	public synchronized void Open() throws Exception {
@@ -137,7 +137,7 @@ public class Konekcija {
 		}
 	}
 	
-	public Statement createResultSetStatement(Connection konekcija) {
+	private Statement createResultSetStatement(Connection konekcija) {
 		try {
 			iskaz = konekcija.createStatement(
 					ResultSet.TYPE_SCROLL_INSENSITIVE,
@@ -151,7 +151,6 @@ public class Konekcija {
 	
 	public ResultSet createResultSet(String sql) {//Connection kon, String sql) {
 		Statement naredba = createResultSetStatement(konekcija);
-		//sql = "SELECT korisnik_id, ime, prezime FROM Korisnik" + " ORDER BY korisnik_id";
 		ResultSet rs = null;
 		try {
 			rs = naredba.executeQuery(sql);
