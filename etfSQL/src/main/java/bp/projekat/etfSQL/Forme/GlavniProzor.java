@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import java.awt.Toolkit;
 import java.awt.BorderLayout;
 
+import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -44,16 +45,20 @@ import java.awt.ScrollPane;
 import java.awt.Scrollbar;
 import java.awt.Color;
 
+import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.border.BevelBorder;
 import javax.swing.JSeparator;
 import javax.swing.ImageIcon;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.border.EmptyBorder;
 
 public class GlavniProzor {
 
 	private JFrame frmEtfSql;
-	private final JTextPane queryTB = new JTextPane();
+	private final static JTextPane queryTB = new JTextPane();
 	private JTextField statusTB;
 	private JTable rezultatTable;
 	
@@ -68,6 +73,7 @@ public class GlavniProzor {
 				try {
 					GlavniProzor window = new GlavniProzor();
 					window.frmEtfSql.setVisible(true);
+					queryTB.requestFocus();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -99,7 +105,6 @@ public class GlavniProzor {
 		frmEtfSql.getContentPane().setLayout(new BorderLayout(0, 0));
 		
 		JPanel panel = new JPanel();
-		panel.setBorder(new MatteBorder(1, 1, 1, 1, (Color) new Color(0, 0, 0)));
 		frmEtfSql.getContentPane().add(panel, BorderLayout.CENTER);
 		panel.setLayout(null);
 		
@@ -142,18 +147,17 @@ public class GlavniProzor {
 		mnSession.setFont(new Font("Arial", Font.PLAIN, 12));
 		menuBar.add(mnSession);
 		
+		slika = new ImageIcon(getClass().getResource("/bp/projekat/etfSQL/Resursi/connect_icon.png"));
+		sl = slika.getImage();
+		temp = sl.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
+		
 		JMenuItem mntmConnect = new JMenuItem("Connect...");
+		mntmConnect.setIcon(new ImageIcon(temp));
 		
 		mntmConnect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
-					
-					ParametriKonekcijeProzor pk = new ParametriKonekcijeProzor();
-					kon = pk.dajKonekciju();
-				}
-				catch(Exception ex) {
-					JOptionPane.showMessageDialog(null, ex.getMessage());
-				}
+				
+				uspostaviKonekciju();
 
 			}
 		});
@@ -161,8 +165,13 @@ public class GlavniProzor {
 		mntmConnect.setFont(new Font("Arial", Font.PLAIN, 12));
 		mnSession.add(mntmConnect);
 		
+		slika = new ImageIcon(getClass().getResource("/bp/projekat/etfSQL/Resursi/disconnect_icon.png"));
+		sl = slika.getImage();
+		temp = sl.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
+		
 		JMenuItem mntmDisconnect = new JMenuItem("Disconnect");
 		mntmDisconnect.setFont(new Font("Arial", Font.PLAIN, 12));
+		mntmDisconnect.setIcon(new ImageIcon(temp));
 		mntmDisconnect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -194,19 +203,16 @@ public class GlavniProzor {
 		mnHelp.setFont(new Font("Arial", Font.PLAIN, 12));
 		menuBar.add(mnHelp);
 		
-		statusTB = new JTextField();
-		statusTB.setForeground(Color.BLUE);
-		statusTB.setFont(new Font("Arial", Font.PLAIN, 11));
-		statusTB.setBackground(SystemColor.menu);
-		statusTB.setBounds(14, 341, 660, 20);
-		panel.add(statusTB);
-		statusTB.setColumns(10);
-		
 		slika = new ImageIcon(getClass().getResource("/bp/projekat/etfSQL/Resursi/rollback_icon.png"));
 		sl = slika.getImage();
 		temp = sl.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
 		
 		JButton btnRollback = new JButton("Rollback");
+		btnRollback.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JOptionPane.showMessageDialog(null, "Nije još implementirano !");
+			}
+		});
 		btnRollback.setIcon(new ImageIcon(temp));
 		btnRollback.setFont(new Font("Arial", Font.PLAIN, 11));
 		btnRollback.setBounds(430, 304, 117, 31);
@@ -217,6 +223,11 @@ public class GlavniProzor {
 		temp = sl.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
 		
 		JButton btnCommit = new JButton("Commit");
+		btnCommit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JOptionPane.showMessageDialog(null, "Nije još implementirano !");
+			}
+		});
 		btnCommit.setIcon(new ImageIcon(temp));
 		btnCommit.setFont(new Font("Arial", Font.PLAIN, 11));
 		btnCommit.setBounds(303, 304, 117, 31);
@@ -226,22 +237,79 @@ public class GlavniProzor {
 		rezultatTable.setBounds(-15, 32, 660, 95);
 		
 		ScrollPane scrollPane = new ScrollPane();
-		scrollPane.setBounds(14, 149, 660, 149);
+		scrollPane.setBounds(14, 178, 660, 120);
 		panel.add(scrollPane);
 		
 		scrollPane.add(rezultatTable);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		panel_1.setBounds(14, 32, 660, 98);
+		panel_1.setBounds(14, 65, 660, 98);
 		panel.add(panel_1);
 		panel_1.setLayout(new BorderLayout(0, 0));
 		panel_1.add(queryTB, BorderLayout.CENTER);
 		queryTB.setFont(new Font("Arial", Font.PLAIN, 14));
 		
 		JSeparator separator = new JSeparator();
-		separator.setBounds(14, 139, 660, 2);
+		separator.setBounds(14, 170, 660, 2);
 		panel.add(separator);
+		
+		JPanel panel_2 = new JPanel();
+		panel_2.setBorder(new EmptyBorder(0, 0, 0, 0));
+		panel_2.setBounds(-1, 345, 697, 31);
+		panel.add(panel_2);
+		panel_2.setLayout(new BorderLayout(0, 0));
+		
+		statusTB = new JTextField();
+		panel_2.add(statusTB, BorderLayout.CENTER);
+		statusTB.setForeground(Color.BLUE);
+		statusTB.setFont(new Font("Arial", Font.PLAIN, 11));
+		statusTB.setBackground(SystemColor.menu);
+		statusTB.setColumns(10);
+		
+		slika = new ImageIcon(getClass().getResource("/bp/projekat/etfSQL/Resursi/connect_icon.png"));
+		sl = slika.getImage();
+		temp = sl.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
+		
+		Border emptyBorder = BorderFactory.createEmptyBorder();
+		
+		JButton btnConnect = new JButton("");
+		btnConnect.setBorder(emptyBorder);
+		btnConnect.setBackground(SystemColor.menu);
+		btnConnect.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				uspostaviKonekciju();
+			}
+		});
+		btnConnect.setToolTipText("Connect to a database.");
+		btnConnect.setIcon(new ImageIcon(temp));
+		btnConnect.setBounds(14, 28, 30, 30);
+		panel.add(btnConnect);
+		
+		slika = new ImageIcon(getClass().getResource("/bp/projekat/etfSQL/Resursi/disconnect_icon.png"));
+		sl = slika.getImage();
+		temp = sl.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
+		
+		JButton btnDisconnect = new JButton("");
+		btnDisconnect.setBorder(emptyBorder);
+		btnDisconnect.setBackground(SystemColor.menu);
+		btnDisconnect.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					
+					kon.Disconnect();
+					JOptionPane.showMessageDialog(null, "Uspješno ste diskonektovani !");
+				}
+				catch(Exception ex) {
+					JOptionPane.showMessageDialog(null, ex.getMessage());
+				}
+			}
+		});
+		btnDisconnect.setToolTipText("Disconnect.");
+		btnDisconnect.setIcon(new ImageIcon(temp));
+		btnDisconnect.setBounds(45, 28, 30, 30);
+		panel.add(btnDisconnect);
 		
 		btnExecute.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -249,10 +317,13 @@ public class GlavniProzor {
 				try {
 															
 					String s = queryTB.getText();
+					long tStart = System.currentTimeMillis();
 					ResultSet rs = kon.createResultSet(s);
 					int br = brojRedova(rs);
 					prikaziUTabeli(rs);
-					statusTB.setText(br + " rows fetched.");
+					long tEnd = System.currentTimeMillis();
+					long tms = tEnd - tStart;
+					statusTB.setText(" >> " + rezultatTable.getRowCount() + " rows fetched. (Elapsed time: " + tms + " ms)");
 					
 				}
 				catch(Exception e) {
@@ -260,6 +331,18 @@ public class GlavniProzor {
 				}
 			}
 		});
+	}
+	
+	public void uspostaviKonekciju() {
+		
+		try {
+			
+			ParametriKonekcijeProzor pk = new ParametriKonekcijeProzor();
+			kon = pk.dajKonekciju();
+		}
+		catch(Exception ex) {
+			JOptionPane.showMessageDialog(null, ex.getMessage());
+		}
 	}
 	
 	public void prikaziUTabeli(ResultSet rs) throws SQLException {

@@ -197,14 +197,17 @@ public class ParametriKonekcijeProzor {
 		btnConnect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				DefaultTableModel model = (DefaultTableModel) table.getModel();
-				model.addRow(new Object[]{textField_TAG.getText(), textField_User.getText(), textField_TAG.getText(), 1, 1});
-				
-				kon.LoadDriver();
-				kon.Connect();
-				JOptionPane.showMessageDialog(null, "Uspješno ste konektovani !");
-				
-				
+				try {
+					DefaultTableModel model = (DefaultTableModel) table.getModel();
+					model.addRow(new Object[]{textField_TAG.getText(), textField_User.getText(), textField_TAG.getText(), 1, 1});
+
+					kon.LoadDriver();
+					kon.Connect();
+					JOptionPane.showMessageDialog(null, "Uspješno ste konektovani !");
+				}
+				catch(Exception e) {
+					JOptionPane.showMessageDialog(null, e.getMessage());
+				}
 			}
 		});
 		btnConnect.setFont(new Font("Arial", Font.PLAIN, 11));
