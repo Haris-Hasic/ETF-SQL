@@ -39,9 +39,16 @@ import java.sql.Statement;
 
 import javax.swing.JTable;
 
+import java.awt.Image;
 import java.awt.ScrollPane;
 import java.awt.Scrollbar;
 import java.awt.Color;
+
+import javax.swing.border.LineBorder;
+import javax.swing.border.MatteBorder;
+import javax.swing.border.BevelBorder;
+import javax.swing.JSeparator;
+import javax.swing.ImageIcon;
 
 public class GlavniProzor {
 
@@ -79,6 +86,7 @@ public class GlavniProzor {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		
 		kon = null;
 		
 		frmEtfSql = new JFrame();
@@ -91,17 +99,19 @@ public class GlavniProzor {
 		frmEtfSql.getContentPane().setLayout(new BorderLayout(0, 0));
 		
 		JPanel panel = new JPanel();
+		panel.setBorder(new MatteBorder(1, 1, 1, 1, (Color) new Color(0, 0, 0)));
 		frmEtfSql.getContentPane().add(panel, BorderLayout.CENTER);
 		panel.setLayout(null);
-		queryTB.setFont(new Font("Arial", Font.PLAIN, 14));
-		queryTB.setBounds(14, 74, 660, 103);
-		panel.add(queryTB);
 		
-		JButton executeButton = new JButton("Execute");
-
-		executeButton.setFont(new Font("Arial", Font.PLAIN, 11));
-		executeButton.setBounds(595, 188, 79, 31);
-		panel.add(executeButton);
+		ImageIcon slika = new ImageIcon(getClass().getResource("/bp/projekat/etfSQL/Resursi/execute_icon.png"));
+		Image sl = slika.getImage();
+		Image temp = sl.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
+		
+		JButton btnExecute = new JButton("Execute");
+		btnExecute.setIcon(new ImageIcon(temp));
+		btnExecute.setFont(new Font("Arial", Font.PLAIN, 11));
+		btnExecute.setBounds(557, 304, 117, 31);
+		panel.add(btnExecute);
 		
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setFont(new Font("Arial", Font.PLAIN, 12));
@@ -137,10 +147,9 @@ public class GlavniProzor {
 		mntmConnect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					kon = new Konekcija();
-					kon.LoadDriver();
-					kon.Connect();
-					JOptionPane.showMessageDialog(null, "Uspješno ste konektovani !");
+					
+					ParametriKonekcijeProzor pk = new ParametriKonekcijeProzor();
+					kon = pk.dajKonekciju();
 				}
 				catch(Exception ex) {
 					JOptionPane.showMessageDialog(null, ex.getMessage());
@@ -186,38 +195,55 @@ public class GlavniProzor {
 		menuBar.add(mnHelp);
 		
 		statusTB = new JTextField();
-		statusTB.setForeground(Color.RED);
+		statusTB.setForeground(Color.BLUE);
 		statusTB.setFont(new Font("Arial", Font.PLAIN, 11));
 		statusTB.setBackground(SystemColor.menu);
 		statusTB.setBounds(14, 341, 660, 20);
 		panel.add(statusTB);
 		statusTB.setColumns(10);
 		
+		slika = new ImageIcon(getClass().getResource("/bp/projekat/etfSQL/Resursi/rollback_icon.png"));
+		sl = slika.getImage();
+		temp = sl.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
+		
 		JButton btnRollback = new JButton("Rollback");
+		btnRollback.setIcon(new ImageIcon(temp));
 		btnRollback.setFont(new Font("Arial", Font.PLAIN, 11));
-		btnRollback.setBounds(580, 32, 94, 31);
+		btnRollback.setBounds(430, 304, 117, 31);
 		panel.add(btnRollback);
 		
-		JButton btnCreateSavepoint = new JButton("Create Savepoint");
-		btnCreateSavepoint.setFont(new Font("Arial", Font.PLAIN, 11));
-		btnCreateSavepoint.setBounds(443, 32, 127, 31);
-		panel.add(btnCreateSavepoint);
+		slika = new ImageIcon(getClass().getResource("/bp/projekat/etfSQL/Resursi/commit_icon.png"));
+		sl = slika.getImage();
+		temp = sl.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
 		
-		JButton button_2 = new JButton("Commit");
-		button_2.setFont(new Font("Arial", Font.PLAIN, 11));
-		button_2.setBounds(346, 32, 87, 31);
-		panel.add(button_2);
+		JButton btnCommit = new JButton("Commit");
+		btnCommit.setIcon(new ImageIcon(temp));
+		btnCommit.setFont(new Font("Arial", Font.PLAIN, 11));
+		btnCommit.setBounds(303, 304, 117, 31);
+		panel.add(btnCommit);
 		
 		rezultatTable = new JTable();
 		rezultatTable.setBounds(-15, 32, 660, 95);
 		
 		ScrollPane scrollPane = new ScrollPane();
-		scrollPane.setBounds(14, 235, 660, 95);
+		scrollPane.setBounds(14, 149, 660, 149);
 		panel.add(scrollPane);
 		
 		scrollPane.add(rezultatTable);
 		
-		executeButton.addActionListener(new ActionListener() {
+		JPanel panel_1 = new JPanel();
+		panel_1.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		panel_1.setBounds(14, 32, 660, 98);
+		panel.add(panel_1);
+		panel_1.setLayout(new BorderLayout(0, 0));
+		panel_1.add(queryTB, BorderLayout.CENTER);
+		queryTB.setFont(new Font("Arial", Font.PLAIN, 14));
+		
+		JSeparator separator = new JSeparator();
+		separator.setBounds(14, 139, 660, 2);
+		panel.add(separator);
+		
+		btnExecute.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				try {

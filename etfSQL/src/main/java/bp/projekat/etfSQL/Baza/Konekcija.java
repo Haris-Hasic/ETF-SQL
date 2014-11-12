@@ -19,7 +19,7 @@ public class Konekcija {
 	static String driverOld = "com.mysql.jdbc.Driver";                   // Drajver za konekciju - alternativni
 	static String urlTest2 = "jdbc:mysql://localhost:3306/Test2";        // URL za jednu konekciju
 	static String urlOld = "jdbc:mysql://localhost:3306/urls1";          // Drugi URL
-	static String url = "jdbc:mysql://localhost:3306/data_vision_db";               // Treci URL
+	static String url = "jdbc:mysql://localhost:3306/bazafdss";               // Treci URL
 
 	                                                                     // Podaci potrebni za napredni oblik konekcija na BP
 	protected int dbConnectionsMinCount = 4;                             // Minimalan broj konekcija na BP
