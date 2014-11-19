@@ -366,8 +366,8 @@ public class GlavniProzor {
 					CommandLogger c = new CommandLogger(kon.getKorisnik(), s, date);
 					
 					popuniLoggerTabelu(c);
-					//writeFile("./test.txt");
-			        readFile("./test.txt");
+					writeFile("./test.txt");
+			        //readFile("./test.txt");
 					
 				}
 				catch(Exception e) {
