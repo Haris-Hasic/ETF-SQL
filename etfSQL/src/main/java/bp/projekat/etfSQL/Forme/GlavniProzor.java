@@ -413,7 +413,7 @@ public class GlavniProzor {
         Writer writer = new OutputStreamWriter(new FileOutputStream(path), UTF8);
         try {
         	for(CommandLogger c : listaLogger) {
-        		String output = String.format(c.getVrijeme() + ", " + c.getUser() + ", " + c.getIzvrsenaKomanda() + "%s",System.getProperty("line.separator"));
+        		String output = String.format(c.getVrijeme() + "," + c.getUser() + "," + c.getIzvrsenaKomanda() + "%s",System.getProperty("line.separator"));
         		writer.write(output);
         	}
         } finally {

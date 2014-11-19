@@ -1,0 +1,2 @@
+Wed Nov 19 22:17:49 CET 2014, root, select * from uposlenik;
+Wed Nov 19 22:17:53 CET 2014, root, select ime from uposlenik;
