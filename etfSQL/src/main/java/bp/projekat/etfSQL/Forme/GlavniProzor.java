@@ -25,7 +25,9 @@ import java.awt.SystemColor;
 import javax.swing.JMenuItem;
 
 import bp.projekat.etfSQL.Baza.Konekcija;
+import bp.projekat.etfSQL.Klase.CommandLogger;
 import bp.projekat.etfSQL.Klase.ListTableModel;
+import bp.projekat.etfSQL.Klase.LoggerTableModel;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,6 +39,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.swing.JTable;
 
@@ -63,6 +70,7 @@ public class GlavniProzor {
 	private JTable rezultatTable;
 	
 	private Konekcija kon;
+	private JTable historyTable;
 
 	/**
 	 * Launch the application.
@@ -237,7 +245,7 @@ public class GlavniProzor {
 		rezultatTable.setBounds(-15, 32, 660, 95);
 		
 		ScrollPane scrollPane = new ScrollPane();
-		scrollPane.setBounds(14, 178, 660, 120);
+		scrollPane.setBounds(14, 178, 405, 120);
 		panel.add(scrollPane);
 		
 		scrollPane.add(rezultatTable);
@@ -311,11 +319,22 @@ public class GlavniProzor {
 		btnDisconnect.setBounds(45, 28, 30, 30);
 		panel.add(btnDisconnect);
 		
+		historyTable = new JTable();
+		historyTable.setBounds(190, 304, 66, 47);
+		
+		ScrollPane scrollPane_Log = new ScrollPane();
+		scrollPane_Log.setSize(249, 120);
+		scrollPane_Log.setLocation(425, 178);
+		scrollPane.setBounds(14, 178, 405, 120);
+		panel.add(scrollPane_Log);
+		
+		scrollPane_Log.add(historyTable);
+		
 		btnExecute.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				try {
-															
+					
 					String s = queryTB.getText();
 					long tStart = System.currentTimeMillis();
 					ResultSet rs = kon.createResultSet(s);
@@ -324,6 +343,13 @@ public class GlavniProzor {
 					long tEnd = System.currentTimeMillis();
 					long tms = tEnd - tStart;
 					statusTB.setText(" >> " + rezultatTable.getRowCount() + " rows fetched. (Elapsed time: " + tms + " ms)");
+					
+					DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+					Date date = new Date();
+					System.out.println(dateFormat.format(date));
+					CommandLogger c = new CommandLogger(kon.getKorisnik(), s, date);
+					
+					popuniLoggerTabelu(c);
 					
 				}
 				catch(Exception e) {
@@ -349,6 +375,15 @@ public class GlavniProzor {
 		
 		ListTableModel modelTabele = ListTableModel.createModelFromResultSet(rs);
 		rezultatTable.setModel(modelTabele);
+	}
+	
+	public void popuniLoggerTabelu(CommandLogger c) {
+		
+		List<CommandLogger> lista = new ArrayList<CommandLogger>();
+		lista.add(c);
+		
+		LoggerTableModel model = new LoggerTableModel(lista);
+		historyTable.setModel(model);
 	}
 	
 	public int brojRedova(ResultSet rs) throws SQLException {

@@ -13,7 +13,7 @@ import org.apache.commons.digester3.Digester;
 
 public class Konekcija {
 
-	static String korisnik = "root";                                     // Naziv korisnika za konekciju na BP
+	private static String korisnik = "root";                                     // Naziv korisnika za konekciju na BP
 	static String sifra = "";                                            // Sifra korisnika za konekciju na BP
 	static String driver = "org.gjt.mm.mysql.Driver";                    // Drajver za konekciju na BP
 	static String driverOld = "com.mysql.jdbc.Driver";                   // Drajver za konekciju - alternativni
@@ -44,7 +44,7 @@ public class Konekcija {
 	
 	public void Connect() {
 		try {
-			konekcija = DriverManager.getConnection(url, korisnik, sifra);
+			konekcija = DriverManager.getConnection(url, getKorisnik(), sifra);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -69,7 +69,7 @@ public class Konekcija {
 			dataSource = new BasicDataSource();                         // Instanciranje klase BasicDataSource
 			dataSource.setDriverClassName(driver);                      // Setovanje naziva driver-a
 			dataSource.setUrl(url);                                     // Setovanje URL-a
-			dataSource.setUsername(korisnik);                           // Setovanje naziva korisnika
+			dataSource.setUsername(getKorisnik());                           // Setovanje naziva korisnika
 			dataSource.setPassword(sifra);                              // Setovanje sifre
 			
 			                                                            // Setovanje minimalnog, maksimalnog broja konekcija kao i vremena čekanja za uspostavu konekcije
@@ -167,6 +167,14 @@ public class Konekcija {
 			System.out.println(ime + " " + prezime);
 		} catch (SQLException e) { System.out.println("Greska");
 		}
+	}
+
+	public static String getKorisnik() {
+		return korisnik;
+	}
+
+	static void setKorisnik(String korisnik) {
+		Konekcija.korisnik = korisnik;
 	}
 }
 
