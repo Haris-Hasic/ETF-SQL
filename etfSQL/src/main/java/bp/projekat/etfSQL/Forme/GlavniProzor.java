@@ -71,6 +71,7 @@ public class GlavniProzor {
 	
 	private Konekcija kon;
 	private JTable historyTable;
+	static List<CommandLogger> listaLogger;
 
 	/**
 	 * Launch the application.
@@ -79,6 +80,7 @@ public class GlavniProzor {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					listaLogger = new ArrayList<CommandLogger>();
 					GlavniProzor window = new GlavniProzor();
 					window.frmEtfSql.setVisible(true);
 					queryTB.requestFocus();
@@ -330,6 +332,17 @@ public class GlavniProzor {
 		
 		scrollPane_Log.add(historyTable);
 		
+		historyTable.addMouseListener(new MouseAdapter() {
+			  public void mouseClicked(MouseEvent e) {
+			     if (e.getClickCount() == 2) { // check if a double click
+			    	 
+			    	 int row = historyTable.rowAtPoint(e.getPoint());
+			    	 
+			    	 queryTB.setText((String) historyTable.getValueAt(row, 2));
+			     }
+			   }
+			});
+		
 		btnExecute.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -379,10 +392,9 @@ public class GlavniProzor {
 	
 	public void popuniLoggerTabelu(CommandLogger c) {
 		
-		List<CommandLogger> lista = new ArrayList<CommandLogger>();
-		lista.add(c);
+		listaLogger.add(c);
 		
-		LoggerTableModel model = new LoggerTableModel(lista);
+		LoggerTableModel model = new LoggerTableModel(listaLogger);
 		historyTable.setModel(model);
 	}
 	
