@@ -62,6 +62,9 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.EmptyBorder;
 
+import java.io.*;
+import java.nio.charset.*;
+
 public class GlavniProzor {
 
 	private JFrame frmEtfSql;
@@ -72,6 +75,7 @@ public class GlavniProzor {
 	private Konekcija kon;
 	private JTable historyTable;
 	static List<CommandLogger> listaLogger;
+	private static Charset UTF8 = Charset.forName("UTF-8");
 
 	/**
 	 * Launch the application.
@@ -337,7 +341,6 @@ public class GlavniProzor {
 			     if (e.getClickCount() == 2) { // check if a double click
 			    	 
 			    	 int row = historyTable.rowAtPoint(e.getPoint());
-			    	 
 			    	 queryTB.setText((String) historyTable.getValueAt(row, 2));
 			     }
 			   }
@@ -363,6 +366,8 @@ public class GlavniProzor {
 					CommandLogger c = new CommandLogger(kon.getKorisnik(), s, date);
 					
 					popuniLoggerTabelu(c);
+					//writeFile("./test.txt");
+			        readFile("./test.txt");
 					
 				}
 				catch(Exception e) {
@@ -402,4 +407,27 @@ public class GlavniProzor {
 		
 		return rs.getFetchSize();
 	}
+	
+	//Datoteke
+    public static void writeFile(String path) throws IOException {
+        Writer writer = new OutputStreamWriter(new FileOutputStream(path), UTF8);
+        try {
+        	for(CommandLogger c : listaLogger) {
+        		String output = String.format(c.getVrijeme() + ", " + c.getUser() + ", " + c.getIzvrsenaKomanda() + "%s",System.getProperty("line.separator"));
+        		writer.write(output);
+        	}
+        } finally {
+            writer.close();
+        }
+    }
+
+    public static void readFile(String path) throws IOException {
+        Reader reader = new InputStreamReader(new FileInputStream(path), UTF8);
+        try {
+            int c = reader.read();
+            System.out.println(c);
+        } finally {
+            reader.close();
+        }
+    }
 }
