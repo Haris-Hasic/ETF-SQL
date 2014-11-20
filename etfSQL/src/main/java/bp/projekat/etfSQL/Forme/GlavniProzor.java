@@ -25,7 +25,6 @@ import java.awt.SystemColor;
 import javax.swing.JMenuItem;
 
 import bp.projekat.etfSQL.Baza.Konekcija;
-import bp.projekat.etfSQL.Klase.Command;
 import bp.projekat.etfSQL.Klase.CommandLogger;
 import bp.projekat.etfSQL.Klase.ListTableModel;
 import bp.projekat.etfSQL.Klase.LoggerTableModel;
@@ -72,10 +71,11 @@ public class GlavniProzor {
 	private final static JTextPane queryTB = new JTextPane();
 	private JTextField statusTB;
 	private JTable rezultatTable;
+	
 	private Konekcija kon;
 	private JTable historyTable;
-	static CommandLogger commandLogger;
-	
+	static List<CommandLogger> listaLogger;
+	private static Charset UTF8 = Charset.forName("UTF-8");
 
 	/**
 	 * Launch the application.
@@ -84,6 +84,7 @@ public class GlavniProzor {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					listaLogger = new ArrayList<CommandLogger>();
 					GlavniProzor window = new GlavniProzor();
 					window.frmEtfSql.setVisible(true);
 					queryTB.requestFocus();
@@ -107,13 +108,6 @@ public class GlavniProzor {
 	private void initialize() {
 		
 		kon = null;
-		commandLogger = new CommandLogger();
-		try {
-			commandLogger.ucitajIzDatoteke("./test.txt");
-		}
-		catch (Exception e) {
-			System.out.println(e);
-		}
 		
 		frmEtfSql = new JFrame();
 		frmEtfSql.setResizable(false);
@@ -351,7 +345,6 @@ public class GlavniProzor {
 			     }
 			   }
 			});
-		popuniLoggerTabelu();
 		
 		btnExecute.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -361,7 +354,7 @@ public class GlavniProzor {
 					String s = queryTB.getText();
 					long tStart = System.currentTimeMillis();
 					ResultSet rs = kon.createResultSet(s);
-					// int br = brojRedova(rs);
+					int br = brojRedova(rs);
 					prikaziUTabeli(rs);
 					long tEnd = System.currentTimeMillis();
 					long tms = tEnd - tStart;
@@ -370,17 +363,14 @@ public class GlavniProzor {
 					DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 					Date date = new Date();
 					System.out.println(dateFormat.format(date));
-					Command c = new Command(Konekcija.getKorisnik(), s, date);
-					commandLogger.dodajKomandu(c);
-					commandLogger.spasiUDatoteku("./test.txt");
-					popuniLoggerTabelu();
+					CommandLogger c = new CommandLogger(kon.getKorisnik(), s, date);
 					
-					//writeFile("./test.txt");
+					popuniLoggerTabelu(c);
+					writeFile("./test.txt");
 			        //readFile("./test.txt");
 					
 				}
 				catch(Exception e) {
-					System.out.println(e);
 					JOptionPane.showMessageDialog(null, e.getMessage());
 				}
 			}
@@ -405,8 +395,11 @@ public class GlavniProzor {
 		rezultatTable.setModel(modelTabele);
 	}
 	
-	public void popuniLoggerTabelu() {
-		LoggerTableModel model = new LoggerTableModel(commandLogger.dajListuKomandi());
+	public void popuniLoggerTabelu(CommandLogger c) {
+		
+		listaLogger.add(c);
+		
+		LoggerTableModel model = new LoggerTableModel(listaLogger);
 		historyTable.setModel(model);
 	}
 	
@@ -415,4 +408,26 @@ public class GlavniProzor {
 		return rs.getFetchSize();
 	}
 	
+	//Datoteke
+    public static void writeFile(String path) throws IOException {
+        Writer writer = new OutputStreamWriter(new FileOutputStream(path), UTF8);
+        try {
+        	for(CommandLogger c : listaLogger) {
+        		String output = String.format(c.getVrijeme() + "," + c.getUser() + "," + c.getIzvrsenaKomanda() + "%s",System.getProperty("line.separator"));
+        		writer.write(output);
+        	}
+        } finally {
+            writer.close();
+        }
+    }
+
+    public static void readFile(String path) throws IOException {
+        Reader reader = new InputStreamReader(new FileInputStream(path), UTF8);
+        try {
+            int c = reader.read();
+            System.out.println(c);
+        } finally {
+            reader.close();
+        }
+    }
 }
