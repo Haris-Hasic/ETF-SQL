@@ -6,7 +6,7 @@ import javax.swing.table.AbstractTableModel;
 
 public class LoggerTableModel extends AbstractTableModel
 {
-    private final List<Command> lista;
+    private final List<CommandLogger> lista;
      
     private final String[] columnNames = new String[] {
             "Time", "User", "ExecutedCommand"
@@ -16,7 +16,7 @@ public class LoggerTableModel extends AbstractTableModel
         Date.class, String.class, String.class
     };
  
-    public LoggerTableModel(List<Command> l)
+    public LoggerTableModel(List<CommandLogger> l)
     {
         this.lista = l;
     }
@@ -45,7 +45,7 @@ public class LoggerTableModel extends AbstractTableModel
  
     public Object getValueAt(int rowIndex, int columnIndex)
     {
-        Command row = lista.get(rowIndex);
+        CommandLogger row = lista.get(rowIndex);
         if(0 == columnIndex) {
             return row.getVrijeme();
         }
