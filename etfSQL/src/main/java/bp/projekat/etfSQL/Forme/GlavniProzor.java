@@ -65,6 +65,7 @@ import javax.swing.border.EmptyBorder;
 
 import java.io.*;
 import java.nio.charset.*;
+import javax.swing.JCheckBox;
 
 public class GlavniProzor {
 
@@ -342,6 +343,11 @@ public class GlavniProzor {
 		
 		scrollPane_Log.add(historyTable);
 		
+		final JCheckBox chckbxLogirajUBazu = new JCheckBox("Logiraj u Bazu");
+		chckbxLogirajUBazu.setBounds(579, 31, 95, 23);
+		chckbxLogirajUBazu.setFont(new Font("Arial", Font.PLAIN, 11));
+		panel.add(chckbxLogirajUBazu);
+		
 		historyTable.addMouseListener(new MouseAdapter() {
 			  public void mouseClicked(MouseEvent e) {
 			     if (e.getClickCount() == 2) { // check if a double click
@@ -372,12 +378,16 @@ public class GlavniProzor {
 					System.out.println(dateFormat.format(date));
 					Command c = new Command(Konekcija.getKorisnik(), s, date);
 					commandLogger.dodajKomandu(c);
-					commandLogger.spasiUDatoteku("./test.txt");
-					popuniLoggerTabelu();
 					
-					//writeFile("./test.txt");
-			        //readFile("./test.txt");
+					if(!chckbxLogirajUBazu.isSelected())
+						commandLogger.spasiUDatoteku("./test.txt");
 					
+					else {
+						kon.createLogTable();
+						kon.logiraj(Konekcija.getKorisnik(), s, date);
+					}
+						
+					popuniLoggerTabelu();					
 				}
 				catch(Exception e) {
 					System.out.println(e);
@@ -414,5 +424,4 @@ public class GlavniProzor {
 		
 		return rs.getFetchSize();
 	}
-	
 }

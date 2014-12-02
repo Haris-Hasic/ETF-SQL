@@ -1,3 +1,2 @@
-Wed Nov 19 22:35:21 CET 2014,root,select * from uposlenik;
-Wed Nov 19 22:35:38 CET 2014,root,select id, ime, prezime from uposlenik;
-Wed Nov 19 22:35:47 CET 2014,root,select plata*20 from uposlenik;
+Tue Dec 02 01:06:24 CET 2014,root,select * from uposlenik;
+Tue Dec 02 01:06:34 CET 2014,root,select ime from uposlenik;

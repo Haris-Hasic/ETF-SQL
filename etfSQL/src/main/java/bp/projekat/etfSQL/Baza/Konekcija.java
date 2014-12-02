@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Date;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.digester3.Digester;
@@ -120,10 +121,48 @@ public class Konekcija {
 		}
 		return iskaz;
 	}
-
-	public void createDatabase() {
+	
+	public void createLogTable() {
 		try {
-			iskaz.executeUpdate("CREATE DATABASE Test2");
+			
+			DatabaseMetaData dbm = konekcija.getMetaData();
+			ResultSet tables = dbm.getTables(null, null, "LOG", null);
+			if (tables.next()) {
+			  // Table exists
+			}
+			else {
+				iskaz = konekcija.createStatement();
+				String logtabela = "CREATE TABLE LOG" +
+			                    "(ID INTEGER NOT NULL AUTO_INCREMENT, " +
+			                    "USER VARCHAR(255), " + 
+			                    "IZVRSENA_KOMANDA VARCHAR(255), " + 
+			                    "VRIJEME VARCHAR(255), " + 
+			                    "PRIMARY KEY ( ID ))";
+				
+				iskaz.executeUpdate(logtabela);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void logiraj(String korisnik, String komanda, Date datum) {
+		try {
+			
+			iskaz = konekcija.createStatement();
+			iskaz.executeUpdate("INSERT INTO LOG(user, izvrsena_komanda, vrijeme) VALUES ('" + korisnik + "', '" + komanda + "', '" + datum.toString() + "')");
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void createDatabase(String naziv) {
+		try {
+			//if(!konekcija.getSchema().contains("LogTabela"))
+				iskaz.executeUpdate("CREATE TABLE " + naziv);
+				konekcija.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
