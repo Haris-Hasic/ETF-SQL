@@ -22,7 +22,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Haris/Desktop/ojdbc6.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Haris/Desktop/sqljdbc41.jar"/>
+	<classpathentry kind="lib" path="src/main/java/bp/projekat/etfSQL/Resursi/ojdbc6.jar"/>
+	<classpathentry kind="lib" path="src/main/java/bp/projekat/etfSQL/Resursi/sqljdbc41.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

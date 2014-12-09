@@ -128,7 +128,7 @@ public class GlavniProzor {
 		frmEtfSql.setResizable(false);
 		frmEtfSql.setTitle("ETF SQL");
 		frmEtfSql.setIconImage(Toolkit.getDefaultToolkit().getImage(GlavniProzor.class.getResource("/bp/projekat/etfSQL/Resursi/ETF-Logo.gif")));
-		frmEtfSql.setBounds(100, 100, 693, 402);
+		frmEtfSql.setBounds(100, 100, 796, 594);
 		frmEtfSql.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		frmEtfSql.getContentPane().setLayout(new BorderLayout(0, 0));
@@ -162,7 +162,7 @@ public class GlavniProzor {
 		JButton btnExecute = new JButton("Execute");
 		btnExecute.setIcon(new ImageIcon(temp));
 		btnExecute.setFont(new Font("Arial", Font.PLAIN, 11));
-		btnExecute.setBounds(557, 304, 117, 31);
+		btnExecute.setBounds(663, 493, 117, 31);
 		panel.add(btnExecute);
 		
 		Border emptyBorder = BorderFactory.createEmptyBorder();
@@ -172,7 +172,7 @@ public class GlavniProzor {
 		
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setFont(new Font("Arial", Font.PLAIN, 12));
-		menuBar.setBounds(0, 0, 697, 21);
+		menuBar.setBounds(0, 0, 790, 21);
 		panel.add(menuBar);
 		
 		JMenu mnFile = new JMenu("File");
@@ -266,7 +266,7 @@ public class GlavniProzor {
 		});
 		btnRollback.setIcon(new ImageIcon(temp));
 		btnRollback.setFont(new Font("Arial", Font.PLAIN, 11));
-		btnRollback.setBounds(430, 304, 117, 31);
+		btnRollback.setBounds(536, 493, 117, 31);
 		panel.add(btnRollback);
 		
 		btnRollback2.setIcon(new ImageIcon(temp));
@@ -284,7 +284,7 @@ public class GlavniProzor {
 		});
 		btnCommit.setIcon(new ImageIcon(temp));
 		btnCommit.setFont(new Font("Arial", Font.PLAIN, 11));
-		btnCommit.setBounds(303, 304, 117, 31);
+		btnCommit.setBounds(409, 493, 117, 31);
 		panel.add(btnCommit);
 		
 		btnCommit2.setIcon(new ImageIcon(temp));
@@ -294,26 +294,26 @@ public class GlavniProzor {
 		rezultatTable.setBounds(-15, 32, 660, 95);
 		
 		ScrollPane scrollPane = new ScrollPane();
-		scrollPane.setBounds(14, 178, 405, 120);
+		scrollPane.setBounds(14, 178, 405, 173);
 		panel.add(scrollPane);
 		
 		scrollPane.add(rezultatTable);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		panel_1.setBounds(14, 65, 660, 98);
+		panel_1.setBounds(14, 65, 766, 98);
 		panel.add(panel_1);
 		panel_1.setLayout(new BorderLayout(0, 0));
 		panel_1.add(queryTB, BorderLayout.CENTER);
 		queryTB.setFont(new Font("Arial", Font.PLAIN, 14));
 		
 		JSeparator separator = new JSeparator();
-		separator.setBounds(14, 170, 660, 2);
+		separator.setBounds(14, 170, 766, 2);
 		panel.add(separator);
 		
 		JPanel panel_2 = new JPanel();
 		panel_2.setBorder(new EmptyBorder(0, 0, 0, 0));
-		panel_2.setBounds(-1, 345, 697, 31);
+		panel_2.setBounds(0, 535, 790, 31);
 		panel.add(panel_2);
 		panel_2.setLayout(new BorderLayout(0, 0));
 		
@@ -370,7 +370,7 @@ public class GlavniProzor {
 		historyTable.setBounds(190, 304, 66, 47);
 		
 		ScrollPane scrollPane_Log = new ScrollPane();
-		scrollPane_Log.setSize(249, 120);
+		scrollPane_Log.setSize(355, 303);
 		scrollPane_Log.setLocation(425, 178);
 		scrollPane.setBounds(14, 178, 405, 120);
 		panel.add(scrollPane_Log);
