@@ -8,6 +8,7 @@ import java.awt.Toolkit;
 import java.awt.BorderLayout;
 
 import javax.swing.BorderFactory;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -65,7 +66,9 @@ import javax.swing.border.EmptyBorder;
 
 import java.io.*;
 import java.nio.charset.*;
+
 import javax.swing.JCheckBox;
+
 
 public class GlavniProzor {
 
@@ -101,6 +104,11 @@ public class GlavniProzor {
 	public GlavniProzor() {
 		initialize();
 	}
+	
+	public void setKonekcija(Konekcija k)
+	{
+		kon = k;
+	}
 
 	/**
 	 * Initialize the contents of the frame.
@@ -129,6 +137,24 @@ public class GlavniProzor {
 		frmEtfSql.getContentPane().add(panel, BorderLayout.CENTER);
 		panel.setLayout(null);
 		
+		JButton btnCommit2 = new JButton("");
+		btnCommit2.setToolTipText("Commit changes.");
+		btnCommit2.setBackground(SystemColor.menu);
+		btnCommit2.setBounds(76, 28, 30, 30);
+		panel.add(btnCommit2);
+		
+		JButton btnRollback2 = new JButton("");
+		btnRollback2.setToolTipText("Rollback uncommited changes.");
+		btnRollback2.setBackground(SystemColor.menu);
+		btnRollback2.setBounds(107, 28, 30, 30);
+		panel.add(btnRollback2);
+		
+		JButton btnExecute2 = new JButton("");
+		btnExecute2.setToolTipText("Execute query.");
+		btnExecute2.setBackground(SystemColor.menu);
+		btnExecute2.setBounds(138, 28, 30, 30);
+		panel.add(btnExecute2);
+		
 		ImageIcon slika = new ImageIcon(getClass().getResource("/bp/projekat/etfSQL/Resursi/execute_icon.png"));
 		Image sl = slika.getImage();
 		Image temp = sl.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
@@ -138,6 +164,11 @@ public class GlavniProzor {
 		btnExecute.setFont(new Font("Arial", Font.PLAIN, 11));
 		btnExecute.setBounds(557, 304, 117, 31);
 		panel.add(btnExecute);
+		
+		Border emptyBorder = BorderFactory.createEmptyBorder();
+		
+		btnExecute2.setIcon(new ImageIcon(temp));
+		btnExecute2.setBorder(emptyBorder);
 		
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setFont(new Font("Arial", Font.PLAIN, 12));
@@ -179,7 +210,6 @@ public class GlavniProzor {
 			public void actionPerformed(ActionEvent e) {
 				
 				uspostaviKonekciju();
-
 			}
 		});
 		
@@ -239,6 +269,9 @@ public class GlavniProzor {
 		btnRollback.setBounds(430, 304, 117, 31);
 		panel.add(btnRollback);
 		
+		btnRollback2.setIcon(new ImageIcon(temp));
+		btnRollback2.setBorder(emptyBorder);
+		
 		slika = new ImageIcon(getClass().getResource("/bp/projekat/etfSQL/Resursi/commit_icon.png"));
 		sl = slika.getImage();
 		temp = sl.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
@@ -253,6 +286,9 @@ public class GlavniProzor {
 		btnCommit.setFont(new Font("Arial", Font.PLAIN, 11));
 		btnCommit.setBounds(303, 304, 117, 31);
 		panel.add(btnCommit);
+		
+		btnCommit2.setIcon(new ImageIcon(temp));
+		btnCommit2.setBorder(emptyBorder);
 		
 		rezultatTable = new JTable();
 		rezultatTable.setBounds(-15, 32, 660, 95);
@@ -291,8 +327,6 @@ public class GlavniProzor {
 		slika = new ImageIcon(getClass().getResource("/bp/projekat/etfSQL/Resursi/connect_icon.png"));
 		sl = slika.getImage();
 		temp = sl.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
-		
-		Border emptyBorder = BorderFactory.createEmptyBorder();
 		
 		JButton btnConnect = new JButton("");
 		btnConnect.setBorder(emptyBorder);
@@ -400,9 +434,8 @@ public class GlavniProzor {
 	public void uspostaviKonekciju() {
 		
 		try {
-			
-			ParametriKonekcijeProzor pk = new ParametriKonekcijeProzor();
-			kon = pk.dajKonekciju();
+
+			ParametriKonekcijeProzor pk = new ParametriKonekcijeProzor(this);
 		}
 		catch(Exception ex) {
 			JOptionPane.showMessageDialog(null, ex.getMessage());

@@ -14,13 +14,13 @@ import org.apache.commons.digester3.Digester;
 
 public class Konekcija {
 
-	private static String korisnik = "root";                                     // Naziv korisnika za konekciju na BP
-	static String sifra = "";                                            // Sifra korisnika za konekciju na BP
-	static String driver = "org.gjt.mm.mysql.Driver";                    // Drajver za konekciju na BP
-	static String driverOld = "com.mysql.jdbc.Driver";                   // Drajver za konekciju - alternativni
-	static String urlTest2 = "jdbc:mysql://localhost:3306/Test2";        // URL za jednu konekciju
-	static String urlOld = "jdbc:mysql://localhost:3306/urls1";          // Drugi URL
-	static String url = "jdbc:mysql://localhost:3306/bpbaza";               // Treci URL
+	private static String korisnik;                                     // Naziv korisnika za konekciju na BP
+	static String sifra;                                            // Sifra korisnika za konekciju na BP
+	static String driver;// = "org.gjt.mm.mysql.Driver";                    // Drajver za konekciju na BP
+	//static String driverOld = "com.mysql.jdbc.Driver";                   // Drajver za konekciju - alternativni
+	//static String urlTest2 = "jdbc:mysql://localhost:3306/Test2";        // URL za jednu konekciju
+	//static String urlOld = "jdbc:mysql://localhost:3306/urls1";          // Drugi URL
+	static String url;// = "jdbc:mysql://localhost:3306/bpbaza";               // Treci URL
 
 	                                                                     // Podaci potrebni za napredni oblik konekcija na BP
 	protected int dbConnectionsMinCount = 4;                             // Minimalan broj konekcija na BP
@@ -34,8 +34,37 @@ public class Konekcija {
 	static Statement iskaz = null;                                       // Osobina naredba za rad sa BP
 	static ResultSet rezultat = null;                                    // Osobina skup redova rezultata
 	static DatabaseMetaData metaPodaci = null;                           // Osobina meta podataka
-
-	public void LoadDriver() {                                           // Driver je staticka varijabla, definisana naprijed koja daje naziv drajvera
+	
+	public Konekcija(String tip, String h, String p, String dbn, String k, String pass) 
+	{
+		korisnik = k;
+		sifra = pass;
+		
+		if(tip.equalsIgnoreCase("mysql")) {
+			driver = "org.gjt.mm.mysql.Driver";
+			url = "jdbc:" + tip + "://" + h + ":" + p + "/" + dbn;
+		}
+		
+		else if(tip.equalsIgnoreCase("oracle"))
+		{
+			driver = "oracle.jdbc.OracleDriver";
+			url = "jdbc:" + tip + ":thin:@" + h + ":" + p + ":" + dbn;
+		}
+		
+		else if(tip.equalsIgnoreCase("postgresql"))
+		{
+			driver = "org.postgresql.Driver";
+			url = "jdbc:" + tip + "://" + h + ":" + p + "/" + dbn;
+		}
+		
+		else 
+		{
+			//driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+			//url = "jdbc:sqlserver" + tip + ":thin:@" + h + ":" + p + ":" + dbn;
+		}
+	}
+	
+	public void LoadDriver() { // Driver je staticka varijabla, definisana naprijed koja daje naziv drajvera
 		try {
 			Class.forName(driver);
 		} catch (ClassNotFoundException e) {
