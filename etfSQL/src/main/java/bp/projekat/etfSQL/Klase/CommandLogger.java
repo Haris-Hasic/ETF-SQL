@@ -23,7 +23,7 @@ public class CommandLogger {
 	}
 	
 	public void dodajKomandu(Command c) {
-		listaKomandi.add(c);
+		listaKomandi.add(0, c);
 	}
 	
 	public List<Command> dajListuKomandi() {

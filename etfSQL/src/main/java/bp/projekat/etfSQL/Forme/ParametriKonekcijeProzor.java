@@ -154,28 +154,16 @@ public class ParametriKonekcijeProzor {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				try {
-					
 					String tip;
 					
 					if(rdbtnOracle.isSelected()) 
-					{
 						kon = new OracleKonekcija(textField_User.getText(), textField_Pass.getText(), textField_Host.getText(), textField_Port.getText(), textField_dbName.getText());
-					}
-					
 					else if(rdbtnPostgresql.isSelected()) 
-					{
 						kon = new PostgreKonekcija(textField_User.getText(), textField_Pass.getText(), textField_Host.getText(), textField_Port.getText(), textField_dbName.getText());
-					}
-					
 					else if(rdbtnMssql.isSelected()) 
-					{
 						kon = new MssqlKonekcija(textField_User.getText(), textField_Pass.getText(), textField_Host.getText(), textField_Port.getText(), textField_dbName.getText());
-					}
-					
 					else
-					{
 						kon = new MysqlKonekcija(textField_User.getText(), textField_Pass.getText(), textField_Host.getText(), textField_Port.getText(), textField_dbName.getText());
-					}
 					
 					DefaultTableModel model = (DefaultTableModel) table.getModel();
 					model.addRow(new Object[]{txtTAG.getText(), textField_User.getText(), "-", "-", "-"});
