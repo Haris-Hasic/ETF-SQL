@@ -29,6 +29,10 @@ import javax.swing.UIManager;
 import javax.swing.JButton;
 
 import bp.projekat.etfSQL.Baza.Konekcija;
+import bp.projekat.etfSQL.Baza.MssqlKonekcija;
+import bp.projekat.etfSQL.Baza.MysqlKonekcija;
+import bp.projekat.etfSQL.Baza.OracleKonekcija;
+import bp.projekat.etfSQL.Baza.PostgreKonekcija;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -42,7 +46,7 @@ public class ParametriKonekcijeProzor {
 	private JTextField textField_Pass;
 	private JTable table;
 	private Konekcija kon;
-	private JTextField txtEtflab;
+	private JTextField txtTAG;
 	private JTextField textField_Host;
 	private JTextField textField_dbName;
 	private JTextField textField_Port;
@@ -155,31 +159,32 @@ public class ParametriKonekcijeProzor {
 					
 					if(rdbtnOracle.isSelected()) 
 					{
-						tip = "oracle";
+						kon = new OracleKonekcija(textField_User.getText(), textField_Pass.getText(), textField_Host.getText(), textField_Port.getText(), textField_dbName.getText());
 					}
 					
 					else if(rdbtnPostgresql.isSelected()) 
 					{
-						tip = "postgresql";
+						kon = new PostgreKonekcija(textField_User.getText(), textField_Pass.getText(), textField_Host.getText(), textField_Port.getText(), textField_dbName.getText());
 					}
 					
 					else if(rdbtnMssql.isSelected()) 
 					{
-						tip = "sqlserver";
+						kon = new MssqlKonekcija(textField_User.getText(), textField_Pass.getText(), textField_Host.getText(), textField_Port.getText(), textField_dbName.getText());
 					}
 					
 					else
 					{
-						tip = "mysql";
+						kon = new MysqlKonekcija(textField_User.getText(), textField_Pass.getText(), textField_Host.getText(), textField_Port.getText(), textField_dbName.getText());
 					}
 					
 					DefaultTableModel model = (DefaultTableModel) table.getModel();
-					model.addRow(new Object[]{txtEtflab.getText(), textField_User.getText(), "-", "-", "-"});
+					model.addRow(new Object[]{txtTAG.getText(), textField_User.getText(), "-", "-", "-"});
 					
-					kon = new Konekcija(tip, textField_Host.getText(), textField_Port.getText(), textField_dbName.getText(), textField_User.getText(), textField_Pass.getText());						
-					JOptionPane.showMessageDialog(null, "Uspješno ste konektovani !");
 					kon.LoadDriver();
 					kon.Connect();
+					
+					JOptionPane.showMessageDialog(null, "Uspješno ste konektovani !");
+					JOptionPane.showMessageDialog(null, "Uspješno ste konektovani !\n" + kon.getDriver() + "\n" + kon.getUrl());
 					
 					k.setKonekcija(kon);
 				}
@@ -246,11 +251,10 @@ public class ParametriKonekcijeProzor {
 	    lbl_slika4.setIcon(new ImageIcon(temp));
 	    panel_1.add(lbl_slika4);
 	    
-	    txtEtflab = new JTextField();
-	    txtEtflab.setText("ETFLAB");
-	    txtEtflab.setColumns(10);
-	    txtEtflab.setBounds(490, 129, 235, 20);
-	    panel.add(txtEtflab);
+	    txtTAG = new JTextField();
+	    txtTAG.setColumns(10);
+	    txtTAG.setBounds(490, 129, 235, 20);
+	    panel.add(txtTAG);
 	    
 	    JLabel labelTAG = new JLabel("TAG :");
 	    labelTAG.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -274,11 +278,11 @@ public class ParametriKonekcijeProzor {
 	    textField_dbName.setBounds(490, 184, 235, 20);
 	    panel.add(textField_dbName);
 	    
-	    JLabel lblDbName = new JLabel("DB name :");
-	    lblDbName.setHorizontalAlignment(SwingConstants.RIGHT);
-	    lblDbName.setFont(new Font("Arial", Font.PLAIN, 11));
-	    lblDbName.setBounds(411, 187, 70, 14);
-	    panel.add(lblDbName);
+	    JLabel lblSID = new JLabel("SID :");
+	    lblSID.setHorizontalAlignment(SwingConstants.RIGHT);
+	    lblSID.setFont(new Font("Arial", Font.PLAIN, 11));
+	    lblSID.setBounds(411, 187, 70, 14);
+	    panel.add(lblSID);
 	    
 	    JLabel lblPort = new JLabel("Port :");
 	    lblPort.setHorizontalAlignment(SwingConstants.RIGHT);

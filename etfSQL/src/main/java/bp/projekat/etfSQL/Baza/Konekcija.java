@@ -14,59 +14,107 @@ import org.apache.commons.digester3.Digester;
 
 public class Konekcija {
 
-	private static String korisnik;                                     // Naziv korisnika za konekciju na BP
-	static String sifra;                                            // Sifra korisnika za konekciju na BP
-	static String driver;// = "org.gjt.mm.mysql.Driver";                    // Drajver za konekciju na BP
-	//static String driverOld = "com.mysql.jdbc.Driver";                   // Drajver za konekciju - alternativni
-	//static String urlTest2 = "jdbc:mysql://localhost:3306/Test2";        // URL za jednu konekciju
-	//static String urlOld = "jdbc:mysql://localhost:3306/urls1";          // Drugi URL
-	static String url;// = "jdbc:mysql://localhost:3306/bpbaza";               // Treci URL
+	private static String korisnik;                      // Username korisnika
+	private static String sifra;                         // Password korisnika
+	private static String driver;                        // Driver za bazu podataka na koju se konektujemo
+	private static String url;                           // URL za konekciju
 
-	                                                                     // Podaci potrebni za napredni oblik konekcija na BP
-	protected int dbConnectionsMinCount = 4;                             // Minimalan broj konekcija na BP
-	protected int dbConnectionsMaxCount = 10;                            // Maksimalan broj konekcija na BP
-	protected int dbConnectionMaxWait = -1;                              // Maksimalno vrijeme cekanja za konekciju
-	protected BasicDataSource dataSource;                                // Osobina data source – potrebna za naprednu konekciju na BP
+	private int dbConnectionsMinCount = 4;     			 // Minimalan broj konekcija na BP
+	private int dbConnectionsMaxCount = 10;  			 // Maksimalan broj konekcija na BP
+	private int dbConnectionMaxWait = -1;      			 // Maksimalno vrijeme cekanja za konekciju
+	private BasicDataSource dataSource;        	  		 // Osobina data source – potrebna za naprednu konekciju na BP
 
-	                                                                     // Osobine potrebne za rad sa bazom podataka
-	static Connection konekcija = null;                                  // Osobina konekcija za BP
-	private Connection connection;                                       // Druga konekcija za BP
-	static Statement iskaz = null;                                       // Osobina naredba za rad sa BP
-	static ResultSet rezultat = null;                                    // Osobina skup redova rezultata
-	static DatabaseMetaData metaPodaci = null;                           // Osobina meta podataka
+	private static Connection konekcija = null;          // Osobina konekcija za BP
+	private Connection connection;                       // Druga konekcija za BP
+	private static Statement iskaz = null;               // Osobina naredba za rad sa BP
+	private static ResultSet rezultat = null;            // Osobina skup redova rezultata
+	private static DatabaseMetaData metaPodaci = null;   // Osobina meta podataka
 	
-	public Konekcija(String tip, String h, String p, String dbn, String k, String pass) 
+	public static String getKorisnik() {
+		return korisnik;
+	}
+	static void setKorisnik(String korisnik) {
+		Konekcija.korisnik = korisnik;
+	}
+	public static String getSifra() {
+		return sifra;
+	}
+	public static void setSifra(String sifra) {
+		Konekcija.sifra = sifra;
+	}
+	public static String getDriver() {
+		return driver;
+	}
+	public static void setDriver(String driver) {
+		Konekcija.driver = driver;
+	}
+	public static String getUrl() {
+		return url;
+	}
+	public static void setUrl(String url) {
+		Konekcija.url = url;
+	}
+	public int getDbConnectionsMinCount() {
+		return dbConnectionsMinCount;
+	}
+	public void setDbConnectionsMinCount(int dbConnectionsMinCount) {
+		this.dbConnectionsMinCount = dbConnectionsMinCount;
+	}
+	public int getDbConnectionsMaxCount() {
+		return dbConnectionsMaxCount;
+	}
+	public void setDbConnectionsMaxCount(int dbConnectionsMaxCount) {
+		this.dbConnectionsMaxCount = dbConnectionsMaxCount;
+	}
+	public int getDbConnectionMaxWait() {
+		return dbConnectionMaxWait;
+	}
+	public void setDbConnectionMaxWait(int dbConnectionMaxWait) {
+		this.dbConnectionMaxWait = dbConnectionMaxWait;
+	}
+	public BasicDataSource getDataSource() {
+		return dataSource;
+	}
+	public void setDataSource(BasicDataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+	public static Connection getKonekcija() {
+		return konekcija;
+	}
+	public static void setKonekcija(Connection konekcija) {
+		Konekcija.konekcija = konekcija;
+	}
+	public static Statement getIskaz() {
+		return iskaz;
+	}
+	public static void setIskaz(Statement iskaz) {
+		Konekcija.iskaz = iskaz;
+	}
+	public static ResultSet getRezultat() {
+		return rezultat;
+	}
+	public static void setRezultat(ResultSet rezultat) {
+		Konekcija.rezultat = rezultat;
+	}
+	public static DatabaseMetaData getMetaPodaci() {
+		return metaPodaci;
+	}
+	public static void setMetaPodaci(DatabaseMetaData metaPodaci) {
+		Konekcija.metaPodaci = metaPodaci;
+	}
+	public void setConnection(Connection connection) {
+		this.connection = connection;
+	}
+	
+	public Konekcija(String k, String pass) 
 	{
 		korisnik = k;
 		sifra = pass;
-		
-		if(tip.equalsIgnoreCase("mysql")) {
-			driver = "org.gjt.mm.mysql.Driver";
-			url = "jdbc:" + tip + "://" + h + ":" + p + "/" + dbn;
-		}
-		
-		else if(tip.equalsIgnoreCase("oracle"))
-		{
-			driver = "oracle.jdbc.OracleDriver";
-			url = "jdbc:" + tip + ":thin:@" + h + ":" + p + ":" + dbn;
-		}
-		
-		else if(tip.equalsIgnoreCase("postgresql"))
-		{
-			driver = "org.postgresql.Driver";
-			url = "jdbc:" + tip + "://" + h + ":" + p + "/" + dbn;
-		}
-		
-		else 
-		{
-			//driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-			//url = "jdbc:sqlserver" + tip + ":thin:@" + h + ":" + p + ":" + dbn;
-		}
 	}
 	
-	public void LoadDriver() { // Driver je staticka varijabla, definisana naprijed koja daje naziv drajvera
+	public void LoadDriver() {
 		try {
-			Class.forName(driver);
+			Class.forName(getDriver());
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -74,23 +122,49 @@ public class Konekcija {
 	
 	public void Connect() {
 		try {
-			konekcija = DriverManager.getConnection(url, getKorisnik(), sifra);
+			setKonekcija(DriverManager.getConnection(getUrl(), getKorisnik(), getSifra()));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void Disconnect() {//Connection konekcija) {
+	public void Disconnect() {
 		try {
-			konekcija.close();
+			getKonekcija().close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public Connection returnConnection() {
-		
-		return konekcija;
+	public Statement getStatement() {
+		try {
+			setIskaz(getKonekcija().createStatement());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return getIskaz();
+	}
+	
+	public Statement getResultSetStatement() {
+		try {
+			setIskaz(getKonekcija().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+													ResultSet.CONCUR_UPDATABLE,
+													ResultSet.HOLD_CURSORS_OVER_COMMIT));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return getIskaz();
+	}
+	
+	public ResultSet createResultSet(String sql) {
+		Statement naredba = getResultSetStatement();
+		ResultSet rs = null;
+		try {
+			rs = naredba.executeQuery(sql);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return rs;
 	}
 	
 	public synchronized void Open() throws Exception {
@@ -111,139 +185,23 @@ public class Konekcija {
 		}
 	}
 
-	public Connection getConnection() {
+	public Connection getDataSourceConnection() {
+		
 		connection = null;
-		try {
-			connection = dataSource.getConnection();
-		}
-		catch (SQLException e) {
-			System.out.println("Greska - konekcija");
-		}
+		try {	connection = dataSource.getConnection();	}
+		catch (SQLException e) {	System.out.println("Greska - konekcija");	}
 		return connection;
 	}
 
-	public void closeConnection() {
-		try {
-			dataSource.close();
-		}
-		catch (SQLException e) {
-			System.out.println("Greska - konekcija");
-		}
-	}
-
-	public Statement getStatement() {
-		try {
-			// za datu konekciju kreira i vraća objekat klase Statement
-			iskaz = konekcija.createStatement();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return iskaz;
-	}
-
-	public Statement getStatement(Connection konekcija) {
-		try {
-			// Za datu konekciju kreira i vraća objekat klase Statement
-			iskaz = konekcija.createStatement();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return iskaz;
+	public void closeDataSourceConnection() {
+		
+		try {	dataSource.close();	}
+		catch (SQLException e) {	System.out.println("Greska - konekcija");	}
 	}
 	
-	public void createLogTable() {
-		try {
-			
-			DatabaseMetaData dbm = konekcija.getMetaData();
-			ResultSet tables = dbm.getTables(null, null, "LOG", null);
-			if (tables.next()) {
-			  // Table exists
-			}
-			else {
-				iskaz = konekcija.createStatement();
-				String logtabela = "CREATE TABLE LOG" +
-			                    "(ID INTEGER NOT NULL AUTO_INCREMENT, " +
-			                    "USER VARCHAR(255), " + 
-			                    "IZVRSENA_KOMANDA VARCHAR(255), " + 
-			                    "VRIJEME VARCHAR(255), " + 
-			                    "PRIMARY KEY ( ID ))";
-				
-				iskaz.executeUpdate(logtabela);
-			}
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void logiraj(String korisnik, String komanda, Date datum) {
-		try {
-			
-			iskaz = konekcija.createStatement();
-			iskaz.executeUpdate("INSERT INTO LOG(user, izvrsena_komanda, vrijeme) VALUES ('" + korisnik + "', '" + komanda + "', '" + datum.toString() + "')");
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void createDatabase(String naziv) {
-		try {
-			//if(!konekcija.getSchema().contains("LogTabela"))
-				iskaz.executeUpdate("CREATE TABLE " + naziv);
-				konekcija.commit();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void dropDatabase() {
-		try {
-			iskaz.executeUpdate("DROP DATABASE Test2");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private Statement createResultSetStatement(Connection konekcija) {
-		try {
-			iskaz = konekcija.createStatement(
-					ResultSet.TYPE_SCROLL_INSENSITIVE,
-					ResultSet.CONCUR_UPDATABLE,
-					ResultSet.HOLD_CURSORS_OVER_COMMIT);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return iskaz;
-	}
-	
-	public ResultSet createResultSet(String sql) {//Connection kon, String sql) {
-		Statement naredba = createResultSetStatement(konekcija);
-		ResultSet rs = null;
-		try {
-			rs = naredba.executeQuery(sql);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return rs;
-	}
-	
-	public void prikaziRed(ResultSet rs) {
-		try {
-			String ime = rs.getString("ime");
-			String prezime = rs.getString("prezime");
-			System.out.println(ime + " " + prezime);
-		} catch (SQLException e) { System.out.println("Greska");
-		}
-	}
-
-	public static String getKorisnik() {
-		return korisnik;
-	}
-
-	static void setKorisnik(String korisnik) {
-		Konekcija.korisnik = korisnik;
-	}
+	// Virtuelne funkcije
+	public void createLogTable() {}
+	public void logiraj(String korisnik, String komanda, Date datum) {}
 }
 
 

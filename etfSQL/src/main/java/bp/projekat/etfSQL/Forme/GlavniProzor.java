@@ -68,6 +68,7 @@ import java.io.*;
 import java.nio.charset.*;
 
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 
 
 public class GlavniProzor {
@@ -75,10 +76,10 @@ public class GlavniProzor {
 	private JFrame frmEtfSql;
 	private final static JTextPane queryTB = new JTextPane();
 	private JTextField statusTB;
-	private JTable rezultatTable;
 	private Konekcija kon;
 	private JTable historyTable;
 	static CommandLogger commandLogger;
+	private JTable rezultatTable;
 	
 
 	/**
@@ -134,6 +135,7 @@ public class GlavniProzor {
 		frmEtfSql.getContentPane().setLayout(new BorderLayout(0, 0));
 		
 		JPanel panel = new JPanel();
+		panel.setBackground(SystemColor.menu);
 		frmEtfSql.getContentPane().add(panel, BorderLayout.CENTER);
 		panel.setLayout(null);
 		
@@ -290,30 +292,21 @@ public class GlavniProzor {
 		btnCommit2.setIcon(new ImageIcon(temp));
 		btnCommit2.setBorder(emptyBorder);
 		
-		rezultatTable = new JTable();
-		rezultatTable.setBounds(-15, 32, 660, 95);
-		
-		ScrollPane scrollPane = new ScrollPane();
-		scrollPane.setBounds(14, 178, 405, 173);
-		panel.add(scrollPane);
-		
-		scrollPane.add(rezultatTable);
-		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		panel_1.setBounds(14, 65, 766, 98);
+		panel_1.setBounds(14, 65, 512, 206);
 		panel.add(panel_1);
 		panel_1.setLayout(new BorderLayout(0, 0));
 		panel_1.add(queryTB, BorderLayout.CENTER);
 		queryTB.setFont(new Font("Arial", Font.PLAIN, 14));
 		
 		JSeparator separator = new JSeparator();
-		separator.setBounds(14, 170, 766, 2);
+		separator.setBounds(14, 283, 766, 2);
 		panel.add(separator);
 		
 		JPanel panel_2 = new JPanel();
 		panel_2.setBorder(new EmptyBorder(0, 0, 0, 0));
-		panel_2.setBounds(0, 535, 790, 31);
+		panel_2.setBounds(0, 535, 791, 33);
 		panel.add(panel_2);
 		panel_2.setLayout(new BorderLayout(0, 0));
 		
@@ -368,19 +361,31 @@ public class GlavniProzor {
 		
 		historyTable = new JTable();
 		historyTable.setBounds(190, 304, 66, 47);
+		historyTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		
-		ScrollPane scrollPane_Log = new ScrollPane();
-		scrollPane_Log.setSize(355, 303);
-		scrollPane_Log.setLocation(425, 178);
-		scrollPane.setBounds(14, 178, 405, 120);
+		JScrollPane scrollPane_Log = new JScrollPane();
+		scrollPane_Log.setSize(241, 181);
+		scrollPane_Log.setLocation(536, 90);
 		panel.add(scrollPane_Log);
 		
-		scrollPane_Log.add(historyTable);
+		scrollPane_Log.setViewportView(historyTable);
 		
 		final JCheckBox chckbxLogirajUBazu = new JCheckBox("Logiraj u Bazu");
-		chckbxLogirajUBazu.setBounds(579, 31, 95, 23);
+		chckbxLogirajUBazu.setBounds(685, 31, 95, 23);
 		chckbxLogirajUBazu.setFont(new Font("Arial", Font.PLAIN, 11));
 		panel.add(chckbxLogirajUBazu);
+		
+		rezultatTable = new JTable();
+		JScrollPane scrollPane_1 = new JScrollPane(rezultatTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scrollPane_1.setBounds(14, 295, 766, 187);
+		panel.add(scrollPane_1);
+		rezultatTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		scrollPane_1.setViewportView(rezultatTable);
+		
+		JLabel lblRecentlyExecutedQuerys = new JLabel("Recently executed querys :");
+		lblRecentlyExecutedQuerys.setFont(new Font("Arial", Font.PLAIN, 11));
+		lblRecentlyExecutedQuerys.setBounds(536, 65, 244, 14);
+		panel.add(lblRecentlyExecutedQuerys);
 		
 		historyTable.addMouseListener(new MouseAdapter() {
 			  public void mouseClicked(MouseEvent e) {
@@ -401,7 +406,6 @@ public class GlavniProzor {
 					String s = queryTB.getText();
 					long tStart = System.currentTimeMillis();
 					ResultSet rs = kon.createResultSet(s);
-					// int br = brojRedova(rs);
 					prikaziUTabeli(rs);
 					long tEnd = System.currentTimeMillis();
 					long tms = tEnd - tStart;
