@@ -112,91 +112,61 @@ public class Konekcija {
 		sifra = pass;
 	}
 	
-	public void LoadDriver() {
-		try {
-			Class.forName(getDriver());
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
+	public void LoadDriver() throws Exception {
+		Class.forName(getDriver());
 	}
 	
-	public void Connect() {
-		try {
-			setKonekcija(DriverManager.getConnection(getUrl(), getKorisnik(), getSifra()));
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	public void Connect()  throws Exception {
+		setKonekcija(DriverManager.getConnection(getUrl(), getKorisnik(), getSifra()));
 	}
 
-	public void Disconnect() {
-		try {
-			getKonekcija().close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	public void Disconnect() throws Exception {
+		getKonekcija().close();
 	}
 	
-	public Statement getStatement() {
-		try {
-			setIskaz(getKonekcija().createStatement());
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	public Statement getStatement() throws Exception {
+		setIskaz(getKonekcija().createStatement());
 		return getIskaz();
 	}
 	
-	public Statement getResultSetStatement() {
-		try {
-			setIskaz(getKonekcija().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
-													ResultSet.CONCUR_UPDATABLE,
-													ResultSet.HOLD_CURSORS_OVER_COMMIT));
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	public Statement getResultSetStatement() throws Exception {
+		
+		setIskaz(getKonekcija().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+												ResultSet.CONCUR_UPDATABLE,
+												ResultSet.HOLD_CURSORS_OVER_COMMIT));
 		return getIskaz();
 	}
 	
-	public ResultSet createResultSet(String sql) {
+	public ResultSet createResultSet(String sql)  throws Exception {
 		Statement naredba = getResultSetStatement();
 		ResultSet rs = null;
-		try {
-			rs = naredba.executeQuery(sql);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		rs = naredba.executeQuery(sql);
 		return rs;
 	}
 	
 	public synchronized void Open() throws Exception {
-		                                                                // Using commons-dbcp's BasicDataSource
-		try {
-			dataSource = new BasicDataSource();                         // Instanciranje klase BasicDataSource
-			dataSource.setDriverClassName(driver);                      // Setovanje naziva driver-a
-			dataSource.setUrl(url);                                     // Setovanje URL-a
-			dataSource.setUsername(getKorisnik());                           // Setovanje naziva korisnika
-			dataSource.setPassword(sifra);                              // Setovanje sifre
-			
+
+		dataSource = new BasicDataSource();                         // Instanciranje klase BasicDataSource
+		dataSource.setDriverClassName(driver);                      // Setovanje naziva driver-a
+		dataSource.setUrl(url);                                     // Setovanje URL-a
+		dataSource.setUsername(getKorisnik());                      // Setovanje naziva korisnika
+		dataSource.setPassword(sifra);                              // Setovanje sifre	
 			                                                            // Setovanje minimalnog, maksimalnog broja konekcija kao i vremena čekanja za uspostavu konekcije
-			dataSource.setMaxIdle(dbConnectionsMinCount);
-			//dataSource.setMaxActive(dbConnectionsMaxCount);
-			//dataSource.setMaxWait(dbConnectionMaxWait);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		dataSource.setMaxIdle(dbConnectionsMinCount);
+		//dataSource.setMaxActive(dbConnectionsMaxCount);
+		//dataSource.setMaxWait(dbConnectionMaxWait);
 	}
 
-	public Connection getDataSourceConnection() {
+	public Connection getDataSourceConnection() throws Exception {
 		
 		connection = null;
-		try {	connection = dataSource.getConnection();	}
-		catch (SQLException e) {	System.out.println("Greska - konekcija");	}
+		connection = dataSource.getConnection();
 		return connection;
 	}
 
-	public void closeDataSourceConnection() {
+	public void closeDataSourceConnection() throws Exception {
 		
-		try {	dataSource.close();	}
-		catch (SQLException e) {	System.out.println("Greska - konekcija");	}
+		dataSource.close();
 	}
 	
 	// Virtuelne funkcije

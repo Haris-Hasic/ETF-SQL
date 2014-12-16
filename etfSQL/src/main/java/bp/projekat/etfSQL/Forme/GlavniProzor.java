@@ -80,6 +80,7 @@ public class GlavniProzor {
 	private JTable historyTable;
 	static CommandLogger commandLogger;
 	private JTable rezultatTable;
+	private JTextField textFieldAktivniUser;
 	
 
 	/**
@@ -110,7 +111,11 @@ public class GlavniProzor {
 	{
 		kon = k;
 	}
-
+	
+	public void postaviKorisnika(String k, String b)
+	{
+		textFieldAktivniUser.setText("  " + k + "@" + b);
+	}
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -129,7 +134,7 @@ public class GlavniProzor {
 		frmEtfSql.setResizable(false);
 		frmEtfSql.setTitle("ETF SQL");
 		frmEtfSql.setIconImage(Toolkit.getDefaultToolkit().getImage(GlavniProzor.class.getResource("/bp/projekat/etfSQL/Resursi/ETF-Logo.gif")));
-		frmEtfSql.setBounds(100, 100, 796, 594);
+		frmEtfSql.setBounds(100, 100, 800, 553);
 		frmEtfSql.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		frmEtfSql.getContentPane().setLayout(new BorderLayout(0, 0));
@@ -142,30 +147,64 @@ public class GlavniProzor {
 		JButton btnCommit2 = new JButton("");
 		btnCommit2.setToolTipText("Commit changes.");
 		btnCommit2.setBackground(SystemColor.menu);
-		btnCommit2.setBounds(76, 28, 30, 30);
+		btnCommit2.setBounds(14, 70, 30, 30);
 		panel.add(btnCommit2);
 		
 		JButton btnRollback2 = new JButton("");
 		btnRollback2.setToolTipText("Rollback uncommited changes.");
 		btnRollback2.setBackground(SystemColor.menu);
-		btnRollback2.setBounds(107, 28, 30, 30);
+		btnRollback2.setBounds(46, 70, 30, 30);
 		panel.add(btnRollback2);
 		
+		final JCheckBox chckbxLogirajUBazu = new JCheckBox("Logiraj u Bazu");
+		chckbxLogirajUBazu.setBounds(685, 36, 95, 23);
+		chckbxLogirajUBazu.setFont(new Font("Arial", Font.PLAIN, 11));
+		panel.add(chckbxLogirajUBazu);
+		
 		JButton btnExecute2 = new JButton("");
+		btnExecute2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				try {
+					
+					String s = queryTB.getText();
+					long tStart = System.currentTimeMillis();
+					ResultSet rs = kon.createResultSet(s);
+					prikaziUTabeli(rs);
+					long tEnd = System.currentTimeMillis();
+					long tms = tEnd - tStart;
+					statusTB.setText(" >> " + rezultatTable.getRowCount() + " rows fetched. (Elapsed time: " + tms + " ms)");
+					
+					DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+					Date date = new Date();
+					System.out.println(dateFormat.format(date));
+					Command c = new Command(Konekcija.getKorisnik(), s, date);
+					commandLogger.dodajKomandu(c);
+					
+					if(!chckbxLogirajUBazu.isSelected())
+						commandLogger.spasiUDatoteku("./test.txt");
+					
+					else {
+						kon.createLogTable();
+						kon.logiraj(Konekcija.getKorisnik(), s, date);
+					}
+						
+					popuniLoggerTabelu();					
+				}
+				catch(Exception e) {
+					System.out.println(e);
+					JOptionPane.showMessageDialog(null, e.getMessage());
+				}
+			}
+		});
 		btnExecute2.setToolTipText("Execute query.");
 		btnExecute2.setBackground(SystemColor.menu);
-		btnExecute2.setBounds(138, 28, 30, 30);
+		btnExecute2.setBounds(78, 70, 30, 30);
 		panel.add(btnExecute2);
 		
 		ImageIcon slika = new ImageIcon(getClass().getResource("/bp/projekat/etfSQL/Resursi/execute_icon.png"));
 		Image sl = slika.getImage();
 		Image temp = sl.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
-		
-		JButton btnExecute = new JButton("Execute");
-		btnExecute.setIcon(new ImageIcon(temp));
-		btnExecute.setFont(new Font("Arial", Font.PLAIN, 11));
-		btnExecute.setBounds(663, 493, 117, 31);
-		panel.add(btnExecute);
 		
 		Border emptyBorder = BorderFactory.createEmptyBorder();
 		
@@ -174,12 +213,18 @@ public class GlavniProzor {
 		
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setFont(new Font("Arial", Font.PLAIN, 12));
-		menuBar.setBounds(0, 0, 790, 21);
+		menuBar.setBounds(0, 0, 791, 21);
 		panel.add(menuBar);
 		
 		JMenu mnFile = new JMenu("File");
 		mnFile.setFont(new Font("Arial", Font.PLAIN, 12));
 		menuBar.add(mnFile);
+		
+		JMenuItem mntmNew = new JMenuItem("New");
+		mnFile.add(mntmNew);
+		
+		JMenuItem mntmOpen = new JMenuItem("Open");
+		mnFile.add(mntmOpen);
 		
 		JMenu mnEdit = new JMenu("Edit");
 		mnEdit.setFont(new Font("Arial", Font.PLAIN, 12));
@@ -212,6 +257,7 @@ public class GlavniProzor {
 			public void actionPerformed(ActionEvent e) {
 				
 				uspostaviKonekciju();
+				
 			}
 		});
 		
@@ -260,17 +306,6 @@ public class GlavniProzor {
 		sl = slika.getImage();
 		temp = sl.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
 		
-		JButton btnRollback = new JButton("Rollback");
-		btnRollback.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				JOptionPane.showMessageDialog(null, "Nije još implementirano !");
-			}
-		});
-		btnRollback.setIcon(new ImageIcon(temp));
-		btnRollback.setFont(new Font("Arial", Font.PLAIN, 11));
-		btnRollback.setBounds(536, 493, 117, 31);
-		panel.add(btnRollback);
-		
 		btnRollback2.setIcon(new ImageIcon(temp));
 		btnRollback2.setBorder(emptyBorder);
 		
@@ -278,35 +313,24 @@ public class GlavniProzor {
 		sl = slika.getImage();
 		temp = sl.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
 		
-		JButton btnCommit = new JButton("Commit");
-		btnCommit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				JOptionPane.showMessageDialog(null, "Nije još implementirano !");
-			}
-		});
-		btnCommit.setIcon(new ImageIcon(temp));
-		btnCommit.setFont(new Font("Arial", Font.PLAIN, 11));
-		btnCommit.setBounds(409, 493, 117, 31);
-		panel.add(btnCommit);
-		
 		btnCommit2.setIcon(new ImageIcon(temp));
 		btnCommit2.setBorder(emptyBorder);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		panel_1.setBounds(14, 65, 512, 206);
+		panel_1.setBounds(14, 103, 529, 170);
 		panel.add(panel_1);
 		panel_1.setLayout(new BorderLayout(0, 0));
 		panel_1.add(queryTB, BorderLayout.CENTER);
 		queryTB.setFont(new Font("Arial", Font.PLAIN, 14));
 		
 		JSeparator separator = new JSeparator();
-		separator.setBounds(14, 283, 766, 2);
+		separator.setBounds(14, 284, 766, 2);
 		panel.add(separator);
 		
 		JPanel panel_2 = new JPanel();
 		panel_2.setBorder(new EmptyBorder(0, 0, 0, 0));
-		panel_2.setBounds(0, 535, 791, 33);
+		panel_2.setBounds(14, 485, 766, 33);
 		panel.add(panel_2);
 		panel_2.setLayout(new BorderLayout(0, 0));
 		
@@ -332,7 +356,7 @@ public class GlavniProzor {
 		});
 		btnConnect.setToolTipText("Connect to a database.");
 		btnConnect.setIcon(new ImageIcon(temp));
-		btnConnect.setBounds(14, 28, 30, 30);
+		btnConnect.setBounds(14, 32, 30, 30);
 		panel.add(btnConnect);
 		
 		slika = new ImageIcon(getClass().getResource("/bp/projekat/etfSQL/Resursi/disconnect_icon.png"));
@@ -347,6 +371,7 @@ public class GlavniProzor {
 				try {
 					
 					kon.Disconnect();
+					textFieldAktivniUser.setText("  Not Connected");
 					JOptionPane.showMessageDialog(null, "Uspješno ste diskonektovani !");
 				}
 				catch(Exception ex) {
@@ -356,7 +381,7 @@ public class GlavniProzor {
 		});
 		btnDisconnect.setToolTipText("Disconnect.");
 		btnDisconnect.setIcon(new ImageIcon(temp));
-		btnDisconnect.setBounds(45, 28, 30, 30);
+		btnDisconnect.setBounds(46, 32, 30, 30);
 		panel.add(btnDisconnect);
 		
 		historyTable = new JTable();
@@ -364,28 +389,51 @@ public class GlavniProzor {
 		historyTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		
 		JScrollPane scrollPane_Log = new JScrollPane();
-		scrollPane_Log.setSize(241, 181);
-		scrollPane_Log.setLocation(536, 90);
+		scrollPane_Log.setSize(227, 152);
+		scrollPane_Log.setLocation(553, 121);
 		panel.add(scrollPane_Log);
 		
 		scrollPane_Log.setViewportView(historyTable);
 		
-		final JCheckBox chckbxLogirajUBazu = new JCheckBox("Logiraj u Bazu");
-		chckbxLogirajUBazu.setBounds(685, 31, 95, 23);
-		chckbxLogirajUBazu.setFont(new Font("Arial", Font.PLAIN, 11));
-		panel.add(chckbxLogirajUBazu);
-		
 		rezultatTable = new JTable();
 		JScrollPane scrollPane_1 = new JScrollPane(rezultatTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scrollPane_1.setBounds(14, 295, 766, 187);
+		scrollPane_1.setBounds(14, 297, 766, 177);
 		panel.add(scrollPane_1);
 		rezultatTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		scrollPane_1.setViewportView(rezultatTable);
 		
 		JLabel lblRecentlyExecutedQuerys = new JLabel("Recently executed querys :");
 		lblRecentlyExecutedQuerys.setFont(new Font("Arial", Font.PLAIN, 11));
-		lblRecentlyExecutedQuerys.setBounds(536, 65, 244, 14);
+		lblRecentlyExecutedQuerys.setBounds(553, 103, 227, 14);
 		panel.add(lblRecentlyExecutedQuerys);
+		
+		slika = new ImageIcon(getClass().getResource("/bp/projekat/etfSQL/Resursi/script_icon.png"));
+		sl = slika.getImage();
+		temp = sl.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
+		
+		JButton buttonExecuteAsScript = new JButton("");
+		buttonExecuteAsScript.setToolTipText("Execute query text as script.");
+		buttonExecuteAsScript.setBackground(SystemColor.menu);
+		buttonExecuteAsScript.setBounds(111, 70, 30, 30);
+		buttonExecuteAsScript.setIcon(new ImageIcon(temp));
+		buttonExecuteAsScript.setBorder(emptyBorder);
+		panel.add(buttonExecuteAsScript);
+		
+		JSeparator separator_2 = new JSeparator();
+		separator_2.setBounds(14, 66, 766, 2);
+		panel.add(separator_2);
+		
+		textFieldAktivniUser = new JTextField();
+		textFieldAktivniUser.setEditable(false);
+		textFieldAktivniUser.setText("  Not Connected");
+		textFieldAktivniUser.setFont(new Font("Arial", Font.PLAIN, 12));
+		textFieldAktivniUser.setBounds(86, 34, 176, 27);
+		panel.add(textFieldAktivniUser);
+		textFieldAktivniUser.setColumns(10);
+		
+		JSeparator separator_1 = new JSeparator();
+		separator_1.setBounds(14, 27, 766, 2);
+		panel.add(separator_1);
 		
 		historyTable.addMouseListener(new MouseAdapter() {
 			  public void mouseClicked(MouseEvent e) {
@@ -397,42 +445,6 @@ public class GlavniProzor {
 			   }
 			});
 		popuniLoggerTabelu();
-		
-		btnExecute.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				
-				try {
-					
-					String s = queryTB.getText();
-					long tStart = System.currentTimeMillis();
-					ResultSet rs = kon.createResultSet(s);
-					prikaziUTabeli(rs);
-					long tEnd = System.currentTimeMillis();
-					long tms = tEnd - tStart;
-					statusTB.setText(" >> " + rezultatTable.getRowCount() + " rows fetched. (Elapsed time: " + tms + " ms)");
-					
-					DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-					Date date = new Date();
-					System.out.println(dateFormat.format(date));
-					Command c = new Command(Konekcija.getKorisnik(), s, date);
-					commandLogger.dodajKomandu(c);
-					
-					if(!chckbxLogirajUBazu.isSelected())
-						commandLogger.spasiUDatoteku("./test.txt");
-					
-					else {
-						kon.createLogTable();
-						kon.logiraj(Konekcija.getKorisnik(), s, date);
-					}
-						
-					popuniLoggerTabelu();					
-				}
-				catch(Exception e) {
-					System.out.println(e);
-					JOptionPane.showMessageDialog(null, e.getMessage());
-				}
-			}
-		});
 	}
 	
 	public void uspostaviKonekciju() {

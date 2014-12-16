@@ -1,6 +1,5 @@
 package bp.projekat.etfSQL.Forme;
 
-
 import javax.swing.JFrame;
 
 import java.awt.Image;
@@ -33,28 +32,43 @@ import bp.projekat.etfSQL.Baza.MssqlKonekcija;
 import bp.projekat.etfSQL.Baza.MysqlKonekcija;
 import bp.projekat.etfSQL.Baza.OracleKonekcija;
 import bp.projekat.etfSQL.Baza.PostgreKonekcija;
+import bp.projekat.etfSQL.Klase.Command;
+import bp.projekat.etfSQL.Klase.CommandLogger;
+import bp.projekat.etfSQL.Klase.Korisnik;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.SystemColor;
 import java.awt.Color;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ParametriKonekcijeProzor {
 
 	private JFrame frmConnect;
 	private JTextField textField_User;
 	private JTextField textField_Pass;
-	private JTable table;
 	private Konekcija kon;
 	private JTextField txtTAG;
 	private JTextField textField_Host;
 	private JTextField textField_dbName;
 	private JTextField textField_Port;
+	JRadioButton rdbtnOracle;
+	JRadioButton rdbtnMysql;
+	JRadioButton rdbtnPostgresql;
+	JRadioButton rdbtnMssql;
+	String tip;
+	List<Korisnik> korisnici;
+	private JTable table;
+	static CommandLogger commandLogger;
 
 	/**
 	 * Create the application.
 	 */
 	public ParametriKonekcijeProzor(final GlavniProzor k) {
+		
+		korisnici = new ArrayList<Korisnik>();
 		initialize(k);
 	}
 
@@ -106,26 +120,26 @@ public class ParametriKonekcijeProzor {
 		((javax.swing.border.TitledBorder) panel_1.getBorder()).setTitleFont(new Font("Arial", Font.PLAIN, 11));
 		panel_1.setLayout(null);
 		
-		final JRadioButton rdbtnOracle = new JRadioButton("");
+		rdbtnOracle = new JRadioButton("");
 		rdbtnOracle.setBounds(40, 21, 21, 23);
 		rdbtnOracle.setBackground(SystemColor.window);
 		rdbtnOracle.setFont(new Font("Arial", Font.PLAIN, 11));
 		panel_1.add(rdbtnOracle);
 		
-		final JRadioButton rdbtnMysql = new JRadioButton("");
+		rdbtnMysql = new JRadioButton("");
 		rdbtnMysql.setBounds(113, 21, 21, 23);
 		rdbtnMysql.setBackground(SystemColor.window);
 		rdbtnMysql.setFont(new Font("Arial", Font.PLAIN, 11));
 		panel_1.add(rdbtnMysql);
 		rdbtnMysql.setSelected(true);
 		
-		final JRadioButton rdbtnPostgresql = new JRadioButton("");
+		rdbtnPostgresql = new JRadioButton("");
 		rdbtnPostgresql.setBounds(183, 21, 21, 23);
 		rdbtnPostgresql.setBackground(SystemColor.window);
 		rdbtnPostgresql.setFont(new Font("Arial", Font.PLAIN, 11));
 		panel_1.add(rdbtnPostgresql);
 		
-		final JRadioButton rdbtnMssql = new JRadioButton("");
+		rdbtnMssql = new JRadioButton("");
 	    rdbtnMssql.setBackground(Color.WHITE);
 	    rdbtnMssql.setBounds(252, 21, 21, 23);
 	    panel_1.add(rdbtnMssql);
@@ -135,16 +149,33 @@ public class ParametriKonekcijeProzor {
 		panel.add(scrollPane);
 		
 		DefaultTableModel model = new DefaultTableModel();
-		table = new JTable(model);
-		table.setBackground(SystemColor.window);
-		scrollPane.setViewportView(table);
-		model.addColumn("Tag");
+		model.addColumn("#");
 		model.addColumn("User");
-		model.addColumn("Alias");
-		model.addColumn("Count");
-		model.addColumn("Last Usage");
+		model.addColumn("Host");
+		model.addColumn("Port");
+		model.addColumn("Database/SID");
+		model.addColumn("Total Usage");
+		
+		table = new JTable(model);
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		scrollPane.setViewportView(table);
 		
 		JButton btnTest = new JButton("Test");
+		btnTest.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				try {
+					pokupiPodatke();
+					kon.LoadDriver();
+					kon.Connect();
+					kon.Disconnect();
+					JOptionPane.showMessageDialog(null, "Parametri konekcije su ispravni !");
+				}
+				catch(Exception e) {
+					JOptionPane.showMessageDialog(null, e.getMessage());
+				}
+			}
+		});
 		btnTest.setFont(new Font("Arial", Font.PLAIN, 11));
 		btnTest.setBounds(630, 303, 95, 28);
 		panel.add(btnTest);
@@ -154,27 +185,18 @@ public class ParametriKonekcijeProzor {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				try {
-					String tip;
 					
-					if(rdbtnOracle.isSelected()) 
-						kon = new OracleKonekcija(textField_User.getText(), textField_Pass.getText(), textField_Host.getText(), textField_Port.getText(), textField_dbName.getText());
-					else if(rdbtnPostgresql.isSelected()) 
-						kon = new PostgreKonekcija(textField_User.getText(), textField_Pass.getText(), textField_Host.getText(), textField_Port.getText(), textField_dbName.getText());
-					else if(rdbtnMssql.isSelected()) 
-						kon = new MssqlKonekcija(textField_User.getText(), textField_Pass.getText(), textField_Host.getText(), textField_Port.getText(), textField_dbName.getText());
-					else
-						kon = new MysqlKonekcija(textField_User.getText(), textField_Pass.getText(), textField_Host.getText(), textField_Port.getText(), textField_dbName.getText());
-					
-					DefaultTableModel model = (DefaultTableModel) table.getModel();
-					model.addRow(new Object[]{txtTAG.getText(), textField_User.getText(), "-", "-", "-"});
+					pokupiPodatke();
 					
 					kon.LoadDriver();
 					kon.Connect();
 					
 					JOptionPane.showMessageDialog(null, "Uspješno ste konektovani !");
-					JOptionPane.showMessageDialog(null, "Uspješno ste konektovani !\n" + kon.getDriver() + "\n" + kon.getUrl());
 					
 					k.setKonekcija(kon);
+					k.postaviKorisnika(kon.getKorisnik(), tip);
+					
+					frmConnect.dispose();
 				}
 				catch(Exception e) {
 					JOptionPane.showMessageDialog(null, e.getMessage());
@@ -186,13 +208,32 @@ public class ParametriKonekcijeProzor {
 		panel.add(btnConnect);
 		
 		JButton btnSave = new JButton("Save");
+		btnSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				Korisnik k  = new Korisnik(txtTAG.getText(), textField_Host.getText(), textField_dbName.getText(), textField_Port.getText(), textField_User.getText());
+				korisnici.add(k);
+				
+				DefaultTableModel model = (DefaultTableModel) table.getModel();
+				model.addRow(new Object[]{table.getRowCount()+1, k.getUsername(), k.getHost(), k.getPort(), k.getSid()});
+			}
+		});
 		btnSave.setFont(new Font("Arial", Font.PLAIN, 11));
 		btnSave.setBounds(526, 339, 95, 28);
 		panel.add(btnSave);
 		
 		JButton btnDelete = new JButton("Delete");
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				int row_ind = table.getSelectedRow();
+				
+				if(row_ind != -1)
+					((DefaultTableModel)table.getModel()).removeRow(row_ind);
+			}
+		});
 		btnDelete.setFont(new Font("Arial", Font.PLAIN, 11));
-		btnDelete.setBounds(421, 339, 95, 28);
+		btnDelete.setBounds(525, 303, 95, 28);
 		panel.add(btnDelete);
 		frmConnect.setVisible(true);
 		
@@ -283,5 +324,25 @@ public class ParametriKonekcijeProzor {
 	    textField_Port.setBounds(490, 212, 235, 20);
 	    panel.add(textField_Port);
 		
+	}
+	
+	public void pokupiPodatke() 
+	{
+		if(rdbtnOracle.isSelected()) {
+			tip = textField_Host.getText() + " - Oracle";
+			kon = new OracleKonekcija(textField_User.getText(), textField_Pass.getText(), textField_Host.getText(), textField_Port.getText(), textField_dbName.getText());
+		}
+		else if(rdbtnPostgresql.isSelected()) {
+			tip = textField_Host.getText() + " - PostgreSQL";
+			kon = new PostgreKonekcija(textField_User.getText(), textField_Pass.getText(), textField_Host.getText(), textField_Port.getText(), textField_dbName.getText());
+		}
+		else if(rdbtnMssql.isSelected()) {
+			tip = textField_Host.getText() + " - MSSQL";
+			kon = new MssqlKonekcija(textField_User.getText(), textField_Pass.getText(), textField_Host.getText(), textField_Port.getText(), textField_dbName.getText());
+		}
+		else {
+			tip = textField_Host.getText() + " - MySQL";
+			kon = new MysqlKonekcija(textField_User.getText(), textField_Pass.getText(), textField_Host.getText(), textField_Port.getText(), textField_dbName.getText());
+		}
 	}
 }
