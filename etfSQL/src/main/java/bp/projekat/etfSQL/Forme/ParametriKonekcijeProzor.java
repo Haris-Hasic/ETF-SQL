@@ -195,6 +195,7 @@ public class ParametriKonekcijeProzor {
 					
 					k.setKonekcija(kon);
 					k.postaviKorisnika(kon.getKorisnik(), tip);
+					k.populirajDrvo(textField_dbName.getText());
 					
 					frmConnect.dispose();
 				}

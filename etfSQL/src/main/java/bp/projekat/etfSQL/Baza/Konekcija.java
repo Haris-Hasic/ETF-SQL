@@ -96,7 +96,7 @@ public class Konekcija {
 	public static void setRezultat(ResultSet rezultat) {
 		Konekcija.rezultat = rezultat;
 	}
-	public static DatabaseMetaData getMetaPodaci() {
+	public DatabaseMetaData getMetaPodaci() {
 		return metaPodaci;
 	}
 	public static void setMetaPodaci(DatabaseMetaData metaPodaci) {
