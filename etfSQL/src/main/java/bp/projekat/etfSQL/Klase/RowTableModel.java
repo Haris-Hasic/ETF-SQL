@@ -148,6 +148,7 @@ abstract class RowTableModel<T> extends AbstractTableModel
 	 *  @param column  the column being queried
 	 *  @return the Class of the column being queried
 	*/
+	@Override
 	public Class getColumnClass(int column)
 	{
 		Class columnClass = null;
@@ -183,6 +184,7 @@ abstract class RowTableModel<T> extends AbstractTableModel
 	 * <code>columnNames</code> does not have an entry for this index
 	 * then the default name provided by the superclass is returned
 	 */
+	@Override
 	public String getColumnName(int column)
 	{
 		Object columnName = null;
@@ -212,6 +214,7 @@ abstract class RowTableModel<T> extends AbstractTableModel
 	 * @param   column		the column whose value is to be queried
 	 * @return				  true
 	 */
+	@Override
 	public boolean isCellEditable(int row, int column)
 	{
 		Boolean isEditable = null;
@@ -257,7 +260,7 @@ abstract class RowTableModel<T> extends AbstractTableModel
 	{
 		List<T> rowData = getRowsAsList(rows);
 		T[] array = (T[])Array.newInstance(rowClass, rowData.size());
-		return (T[]) rowData.toArray( array );
+		return rowData.toArray( array );
 	}
 
 	/**

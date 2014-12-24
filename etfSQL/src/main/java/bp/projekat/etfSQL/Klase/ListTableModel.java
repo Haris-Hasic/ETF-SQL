@@ -123,6 +123,7 @@ public class ListTableModel extends RowTableModel<List>
 	 * @exception  IndexOutOfBoundsException  if an invalid row or
 	 *			   column was given
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public void setValueAt(Object value, int row, int column)
 	{

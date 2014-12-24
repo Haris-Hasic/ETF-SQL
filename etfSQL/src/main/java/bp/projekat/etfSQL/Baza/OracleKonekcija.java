@@ -1,15 +1,9 @@
 package bp.projekat.etfSQL.Baza;
 
-import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Date;
-
-import org.apache.commons.dbcp2.BasicDataSource;
-import org.apache.commons.digester3.Digester;
 
 public class OracleKonekcija extends Konekcija {
 
@@ -38,6 +32,7 @@ public class OracleKonekcija extends Konekcija {
 		}
 	}
 	
+	@Override
 	public void createLogTable() {
 		try {
 			
@@ -63,6 +58,7 @@ public class OracleKonekcija extends Konekcija {
 		}
 	}
 	
+	@Override
 	public void logiraj(String korisnik, String komanda, Date datum) {
 		try {
 			

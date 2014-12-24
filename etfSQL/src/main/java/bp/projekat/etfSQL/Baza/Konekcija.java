@@ -4,12 +4,10 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.apache.commons.digester3.Digester;
 
 
 public class Konekcija {

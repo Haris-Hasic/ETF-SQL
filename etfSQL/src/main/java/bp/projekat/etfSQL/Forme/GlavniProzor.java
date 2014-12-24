@@ -1,15 +1,11 @@
 package bp.projekat.etfSQL.Forme;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 
 import java.awt.Toolkit;
 import java.awt.BorderLayout;
 
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -17,6 +13,7 @@ import javax.swing.JTextPane;
 import javax.swing.JButton;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
+import javax.swing.ScrollPaneConstants;
 
 import java.awt.Font;
 
@@ -36,13 +33,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,36 +45,18 @@ import java.util.List;
 import javax.swing.JTable;
 
 import java.awt.Image;
-import java.awt.ScrollPane;
-import java.awt.Scrollbar;
 import java.awt.Color;
 
 import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
-import javax.swing.border.MatteBorder;
 import javax.swing.border.BevelBorder;
 import javax.swing.JSeparator;
 import javax.swing.ImageIcon;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyleContext;
-import javax.swing.text.StyledDocument;
-
-import java.io.*;
-import java.nio.charset.*;
-
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JTree;
-import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -102,12 +77,12 @@ public class GlavniProzor {
 
 	/**
 	 * Launch the application.
-	 */
+	 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					GlavniProzor window = new GlavniProzor();
+					RadniProzor window = new RadniProzor();
 					window.frmEtfSql.setVisible(true);
 					queryTB.requestFocus();
 				} catch (Exception e) {
@@ -115,7 +90,7 @@ public class GlavniProzor {
 				}
 			}
 		});
-	}
+	}*/
 
 	/**
 	 * Create the application.
@@ -152,7 +127,8 @@ public class GlavniProzor {
 		frmEtfSql.setTitle("ETF SQL");
 		frmEtfSql.setIconImage(Toolkit.getDefaultToolkit().getImage(GlavniProzor.class.getResource("/bp/projekat/etfSQL/Resursi/ETF-Logo.gif")));
 		frmEtfSql.setBounds(100, 100, 966, 553);
-		frmEtfSql.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmEtfSql.setDefaultCloseOperation
+		(JFrame.EXIT_ON_CLOSE);
 
 		frmEtfSql.getContentPane().setLayout(new BorderLayout(0, 0));
 
@@ -451,7 +427,7 @@ public class GlavniProzor {
 		scrollPane_Log.setViewportView(historyTable);
 
 		rezultatTable = new JTable();
-		JScrollPane scrollPane_1 = new JScrollPane(rezultatTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		JScrollPane scrollPane_1 = new JScrollPane(rezultatTable, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollPane_1.setBounds(231, 297, 717, 177);
 		panel.add(scrollPane_1);
 		rezultatTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -482,7 +458,7 @@ public class GlavniProzor {
 		textFieldAktivniUser.setEditable(false);
 		textFieldAktivniUser.setText("  Not Connected");
 		textFieldAktivniUser.setFont(new Font("Arial", Font.PLAIN, 12));
-		textFieldAktivniUser.setBounds(86, 34, 176, 27);
+		textFieldAktivniUser.setBounds(86, 34, 343, 27);
 		panel.add(textFieldAktivniUser);
 		textFieldAktivniUser.setColumns(10);
 
@@ -501,6 +477,7 @@ public class GlavniProzor {
 		scrollPane.setViewportView(tree);
 
 		historyTable.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) { // check if a double click
 
@@ -516,7 +493,7 @@ public class GlavniProzor {
 
 		try {
 
-			ParametriKonekcijeProzor pk = new ParametriKonekcijeProzor(this);
+			//ParametriKonekcijeProzor pk = new ParametriKonekcijeProzor(this);
 		}
 		catch(Exception ex) {
 			JOptionPane.showMessageDialog(null, ex.getMessage());
@@ -574,7 +551,7 @@ public class GlavniProzor {
 			String[] tipoviObjekataSys = {"SYSTEM TABLE"};
 			String[] tipoviObjekataSyn = {"SYNONYM"};
 
-			DatabaseMetaData mp = kon.getKonekcija().getMetaData();
+			DatabaseMetaData mp = Konekcija.getKonekcija().getMetaData();
 			ResultSet rsTab = mp.getTables(baza, "%", "%", tipoviObjekataTab);
 			ResultSet rsVie = mp.getTables(baza, "%", "%", tipoviObjekataVie);
 			ResultSet rsSys = mp.getTables(baza, "%", "%", tipoviObjekataSys);
@@ -618,7 +595,7 @@ public class GlavniProzor {
 	{
 		try {
 
-			DatabaseMetaData mp = kon.getKonekcija().getMetaData();
+			DatabaseMetaData mp = Konekcija.getKonekcija().getMetaData();
 			ResultSet rs = mp.getProcedures(baza, null, "%");
 
 			while (rs.next()) {

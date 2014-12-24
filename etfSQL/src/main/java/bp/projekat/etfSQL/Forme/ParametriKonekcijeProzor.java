@@ -11,13 +11,13 @@ import java.awt.BorderLayout;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.JTextField;
 import javax.swing.JRadioButton;
+import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JScrollPane;
@@ -32,7 +32,6 @@ import bp.projekat.etfSQL.Baza.MssqlKonekcija;
 import bp.projekat.etfSQL.Baza.MysqlKonekcija;
 import bp.projekat.etfSQL.Baza.OracleKonekcija;
 import bp.projekat.etfSQL.Baza.PostgreKonekcija;
-import bp.projekat.etfSQL.Klase.Command;
 import bp.projekat.etfSQL.Klase.CommandLogger;
 import bp.projekat.etfSQL.Klase.Korisnik;
 
@@ -40,7 +39,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.SystemColor;
 import java.awt.Color;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,16 +64,16 @@ public class ParametriKonekcijeProzor {
 	/**
 	 * Create the application.
 	 */
-	public ParametriKonekcijeProzor(final GlavniProzor k) {
+	public ParametriKonekcijeProzor(final RadniProzor radniProzor) {
 		
 		korisnici = new ArrayList<Korisnik>();
-		initialize(k);
+		initialize(radniProzor);
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize(final GlavniProzor k) {
+	private void initialize(final RadniProzor radniProzor) {
 		
 		frmConnect = new JFrame();
 		frmConnect.setBackground(SystemColor.window);
@@ -83,7 +81,7 @@ public class ParametriKonekcijeProzor {
 		frmConnect.setIconImage(Toolkit.getDefaultToolkit().getImage(ParametriKonekcijeProzor.class.getResource("/bp/projekat/etfSQL/Resursi/ETF-Logo.gif")));
 		frmConnect.setTitle("Connect");
 		frmConnect.setBounds(100, 100, 741, 406);
-		frmConnect.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frmConnect.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(SystemColor.window);
@@ -193,9 +191,9 @@ public class ParametriKonekcijeProzor {
 					
 					JOptionPane.showMessageDialog(null, "Uspješno ste konektovani !");
 					
-					k.setKonekcija(kon);
-					k.postaviKorisnika(kon.getKorisnik(), tip);
-					k.populirajDrvo(textField_dbName.getText());
+					radniProzor.setKonekcija(kon);
+					radniProzor.postaviKorisnika(Konekcija.getKorisnik(), tip);
+					radniProzor.populirajDrvo(textField_dbName.getText());
 					
 					frmConnect.dispose();
 				}
