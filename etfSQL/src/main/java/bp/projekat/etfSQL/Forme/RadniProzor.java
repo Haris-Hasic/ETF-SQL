@@ -10,7 +10,6 @@ import javax.swing.JToolBar;
 import java.awt.BorderLayout;
 
 import javax.swing.JButton;
-
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -32,6 +31,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JMenu;
 import javax.swing.SwingConstants;
 
+import java.awt.Desktop;
+import java.awt.FileDialog;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.SystemColor;
@@ -39,10 +40,14 @@ import java.awt.Window.Type;
 import java.awt.Toolkit;
 
 import javax.swing.JTree;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -56,13 +61,16 @@ import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+
 import bp.projekat.etfSQL.Baza.Konekcija;
+import bp.projekat.etfSQL.Baza.ScriptRunner;
 import bp.projekat.etfSQL.Klase.Command;
 import bp.projekat.etfSQL.Klase.CommandLogger;
 import bp.projekat.etfSQL.Klase.ListTableModel;
 import bp.projekat.etfSQL.Klase.LoggerTableModel;
 
 import javax.swing.JCheckBox;
+import javax.swing.JTabbedPane;
 
 public class RadniProzor {
 
@@ -122,6 +130,7 @@ public class RadniProzor {
 		frmEtfSql.setBounds(100, 100, 900, 550);
 		frmEtfSql.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmEtfSql.setMinimumSize(new Dimension(900, 550));
+		frmEtfSql.setLocationRelativeTo(null); 
 		
 		kon = null;
 		commandLogger = new CommandLogger();
@@ -140,7 +149,18 @@ public class RadniProzor {
 		mnFile.setFont(new Font("SansSerif", Font.PLAIN, 12));
 		menuBar.add(mnFile);
 		
+		slika = new ImageIcon(getClass().getResource("/bp/projekat/etfSQL/Resursi/close_icon.png"));
+		sl = slika.getImage();
+		tempSl = sl.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
+		
+		JMenuItem mntmNew = new JMenuItem("New");
+		mntmNew.setFont(new Font("SansSerif", Font.PLAIN, 12));
+		mnFile.add(mntmNew);
+		
+		mnFile.addSeparator();
+		
 		JMenuItem mntmExit = new JMenuItem("Exit");
+		mntmExit.setIcon(new ImageIcon(tempSl));
 		mntmExit.setFont(new Font("SansSerif", Font.PLAIN, 12));
 		mnFile.add(mntmExit);
 		
@@ -187,6 +207,21 @@ public class RadniProzor {
 		JMenu mnHelp = new JMenu("Help");
 		mnHelp.setFont(new Font("SansSerif", Font.PLAIN, 12));
 		menuBar.add(mnHelp);
+		
+		slika = new ImageIcon(getClass().getResource("/bp/projekat/etfSQL/Resursi/help_icon.png"));
+		sl = slika.getImage();
+		tempSl = sl.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
+		
+		JMenuItem mntmViewDocumentation = new JMenuItem("View Documentation");
+		mntmViewDocumentation.setIcon(new ImageIcon(tempSl));
+		mntmViewDocumentation.setFont(new Font("SansSerif", Font.PLAIN, 12));
+		mnHelp.add(mntmViewDocumentation);
+		
+		mnHelp.addSeparator();
+		
+		JMenuItem mntmAboutEtfSql = new JMenuItem("About ETF SQL...");
+		mntmAboutEtfSql.setFont(new Font("SansSerif", Font.PLAIN, 12));
+		mnHelp.add(mntmAboutEtfSql);
 		frmEtfSql.getContentPane().setLayout(new BorderLayout(0, 0));
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -197,7 +232,7 @@ public class RadniProzor {
 		GridBagLayout gbl_panel = new GridBagLayout();
 		gbl_panel.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_panel.columnWeights = new double[]{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel.columnWeights = new double[]{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gbl_panel.rowWeights = new double[]{0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
 		panel.setLayout(gbl_panel);
 		
@@ -205,7 +240,7 @@ public class RadniProzor {
 		JScrollPane scrollPane_1 = new JScrollPane();
 		GridBagConstraints gbc_scrollPane_1 = new GridBagConstraints();
 		gbc_scrollPane_1.gridheight = 9;
-		gbc_scrollPane_1.gridwidth = 15;
+		gbc_scrollPane_1.gridwidth = 18;
 		gbc_scrollPane_1.insets = new Insets(0, 0, 5, 5);
 		gbc_scrollPane_1.fill = GridBagConstraints.BOTH;
 		gbc_scrollPane_1.gridx = 5;
@@ -213,6 +248,7 @@ public class RadniProzor {
 		panel.add(scrollPane_1, gbc_scrollPane_1);
 		
 		query_txtBox = new JTextArea();
+		query_txtBox.setFont(new Font("SansSerif", Font.PLAIN, 15));
 		scrollPane_1.setViewportView(query_txtBox);
 		//--------------------------------------------------------------------------------------------------------------------------
 		
@@ -256,7 +292,51 @@ public class RadniProzor {
 		toolBar.add(aktivniUser_txtBox);
 		toolBar.add(new JLabel("  "));
 		toolBar.add(new JSeparator(SwingConstants.VERTICAL));
-		toolBar.add(new JLabel(" "));
+		toolBar.add(new JLabel("  "));
+		//--------------------------------------------------------------------------------------------------------------------------
+		slika = new ImageIcon(getClass().getResource("/bp/projekat/etfSQL/Resursi/script_icon.png"));
+		sl = slika.getImage();
+		tempSl = sl.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
+				
+		JButton btnCreateScript = new JButton("");
+		btnCreateScript.setToolTipText("Write new script.");
+		btnCreateScript.setBounds(78, 70, 30, 30);
+		btnCreateScript.setIcon(new ImageIcon(tempSl));
+		emptyBorder = BorderFactory.createEmptyBorder();
+		btnCreateScript.setBorder(emptyBorder);
+		
+		toolBar.add(btnCreateScript);
+		toolBar.add(new JLabel("  "));
+		//--------------------------------------------------------------------------------------------------------------------------
+		slika = new ImageIcon(getClass().getResource("/bp/projekat/etfSQL/Resursi/ExecuteAsScript_icon.png"));
+		sl = slika.getImage();
+		tempSl = sl.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
+						
+		JButton btnExecuteScript = new JButton("");
+		btnExecuteScript.setToolTipText("Execute written text as script.");
+		btnExecuteScript.setBounds(78, 70, 30, 30);
+		btnExecuteScript.setIcon(new ImageIcon(tempSl));
+		emptyBorder = BorderFactory.createEmptyBorder();
+		btnExecuteScript.setBorder(emptyBorder);
+				
+		toolBar.add(btnExecuteScript);
+		toolBar.add(new JLabel("  "));
+		//--------------------------------------------------------------------------------------------------------------------------
+		slika = new ImageIcon(getClass().getResource("/bp/projekat/etfSQL/Resursi/execute_script_icon.png"));
+		sl = slika.getImage();
+		tempSl = sl.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
+						
+		JButton btnExecuteAsScript = new JButton("");
+		btnExecuteAsScript.setToolTipText("Execute selected script.");
+		btnExecuteAsScript.setBounds(78, 70, 30, 30);
+		btnExecuteAsScript.setIcon(new ImageIcon(tempSl));
+		emptyBorder = BorderFactory.createEmptyBorder();
+		btnExecuteAsScript.setBorder(emptyBorder);
+				
+		toolBar.add(btnExecuteAsScript);
+		toolBar.add(new JLabel("  "));
+		toolBar.add(new JSeparator(SwingConstants.VERTICAL));
+		toolBar.add(new JLabel("  "));
 		//--------------------------------------------------------------------------------------------------------------------------
 		slika = new ImageIcon(getClass().getResource("/bp/projekat/etfSQL/Resursi/execute_icon.png"));
 		sl = slika.getImage();
@@ -301,6 +381,7 @@ public class RadniProzor {
 		toolBar.add(new JLabel("  "));
 		toolBar.add(new JSeparator(SwingConstants.VERTICAL));
 		toolBar.add(new JLabel(" "));
+		toolBar.add(new JLabel(" "));
 		//--------------------------------------------------------------------------------------------------------------------------
 		final JCheckBox logirajUBazu_checkBox = new JCheckBox("Logiraj u Bazu");
 		logirajUBazu_checkBox.setFont(new Font("SansSerif", Font.PLAIN, 11));
@@ -327,13 +408,12 @@ public class RadniProzor {
 		panel.add(scrollPane, gbc_scrollPane);
 
 		JScrollPane scrollPane_3 = new JScrollPane();
-		scrollPane_3.setViewportBorder(new TitledBorder(null, "Recently Executed Querys", TitledBorder.LEADING, TitledBorder.TOP, new Font("Sans Serif",Font.PLAIN,12), null));
 		GridBagConstraints gbc_scrollPane_3 = new GridBagConstraints();
 		gbc_scrollPane_3.gridheight = 9;
-		gbc_scrollPane_3.gridwidth = 9;
+		gbc_scrollPane_3.gridwidth = 6;
 		gbc_scrollPane_3.insets = new Insets(0, 0, 5, 0);
 		gbc_scrollPane_3.fill = GridBagConstraints.BOTH;
-		gbc_scrollPane_3.gridx = 20;
+		gbc_scrollPane_3.gridx = 23;
 		gbc_scrollPane_3.gridy = 0;
 		panel.add(scrollPane_3, gbc_scrollPane_3);
 		
@@ -400,6 +480,7 @@ public class RadniProzor {
 			}
 		});
 		//--------------------------------------------------------------------------------------------------------------------------
+		// Disconnect dugme
 		btnDisconnect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -415,12 +496,116 @@ public class RadniProzor {
 			}
 		});
 		//--------------------------------------------------------------------------------------------------------------------------
+		// Commit dugme
+		btnCommit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				try {
+
+					int reply = JOptionPane.showConfirmDialog(null, "Sve izvršene promjene će biti trajno zapisane na disk.\n Jeste li sigurni da želite uraditi commit ?", "Commit Changes To Database ?", JOptionPane.YES_NO_OPTION);
+					
+			        if (reply == JOptionPane.YES_OPTION) {
+			        	kon.Commit();
+			        	JOptionPane.showMessageDialog(null, "Promjene su uspješno zapisane u bazu.");
+			        }
+				}
+				catch (Exception e) {
+					
+					JOptionPane.showMessageDialog(null, e.getMessage());
+				}
+			}
+		});
+		//--------------------------------------------------------------------------------------------------------------------------
+		// Rollback dugme
+		btnRollback.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				try {
+					
+					int reply = JOptionPane.showConfirmDialog(null, "Sve izvršene promjene nakon zadnjeg konzistentnog stanja će biti izgubljene.\n Jeste li sigurni da želite uraditi rollback ?", "Rollback Changes ?", JOptionPane.YES_NO_OPTION);
+					
+			        if (reply == JOptionPane.YES_OPTION) {
+			        	kon.Rollback();
+			        	JOptionPane.showMessageDialog(null, "Napravljene promjene su uspješno poništene.");
+			        }
+				}
+				catch (Exception e) {
+					
+					JOptionPane.showMessageDialog(null, e.getMessage());
+				}
+			}
+		});
+		//--------------------------------------------------------------------------------------------------------------------------
+		// Execute Script dugme
+		btnExecuteScript.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				try {
+					
+					FileDialog fd = new FileDialog(frmEtfSql, "Open File...", FileDialog.LOAD);
+					fd.setVisible(true);
+					String path = fd.getDirectory() + fd.getFile();
+
+					ScriptRunner runner = new ScriptRunner(kon.getKonekcija(), true, true);//konekcija, [booleanAutoCommit], [booleanStopOnerror]
+					runner.runScript(new BufferedReader(new FileReader(path)));
+					JOptionPane.showMessageDialog(null, "Skripta uspješno izvršena.");
+				}
+				catch (Exception e) {
+					
+					JOptionPane.showMessageDialog(null, e.getMessage());
+				}
+			}
+		});
+		//--------------------------------------------------------------------------------------------------------------------------
+		// Create Script dugme
+		btnCreateScript.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				try {
+
+					SkriptaProzor sp = new SkriptaProzor();
+				}
+				catch(Exception ex) {
+					JOptionPane.showMessageDialog(null, ex.getMessage());
+				}
+			}
+		});
+		//--------------------------------------------------------------------------------------------------------------------------
+		mntmViewDocumentation.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+
+				try {
+
+					File pdfFile = new File(getClass().getResource("/bp/projekat/etfSQL/Resursi/Help.pdf").getFile());
+					
+					if (pdfFile.exists()) {
+
+						if (Desktop.isDesktopSupported()) {
+							Desktop.getDesktop().open(pdfFile);
+						} else {
+							JOptionPane.showMessageDialog(null, "Awt Desktop is not supported!");
+						}
+					}
+
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(null, e.getMessage());
+				}
+			}
+		});
+		//--------------------------------------------------------------------------------------------------------------------------
+		mntmExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				frmEtfSql.dispose();
+			}
+		});
+		//--------------------------------------------------------------------------------------------------------------------------
 
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
 		korijen = new DefaultMutableTreeNode("Items");
 		DefaultTreeModel model = new DefaultTreeModel(korijen);
 		drvo = new JTree();
+		drvo.setBorder(null);
 		drvo.setModel(model);
 		scrollPane.setViewportView(drvo);
 

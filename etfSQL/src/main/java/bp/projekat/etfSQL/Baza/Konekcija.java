@@ -101,7 +101,7 @@ public class Konekcija {
 		Konekcija.metaPodaci = metaPodaci;
 	}
 	public void setConnection(Connection connection) {
-		this.connection = connection;
+		this.konekcija = connection;
 	}
 	
 	public Konekcija(String k, String pass) 
@@ -115,7 +115,9 @@ public class Konekcija {
 	}
 	
 	public void Connect()  throws Exception {
+		
 		setKonekcija(DriverManager.getConnection(getUrl(), getKorisnik(), getSifra()));
+		konekcija.setAutoCommit(false);
 	}
 
 	public void Disconnect() throws Exception {
@@ -125,6 +127,12 @@ public class Konekcija {
 	public Statement getStatement() throws Exception {
 		setIskaz(getKonekcija().createStatement());
 		return getIskaz();
+	}
+	
+	public boolean executeStatement(String s) throws Exception {
+		
+		Statement st = getKonekcija().createStatement();
+		return st.execute(s);
 	}
 	
 	public Statement getResultSetStatement() throws Exception {
@@ -165,6 +173,16 @@ public class Konekcija {
 	public void closeDataSourceConnection() throws Exception {
 		
 		dataSource.close();
+	}
+	
+	public void Commit() throws Exception {
+		
+		konekcija.commit();
+	}
+	
+	public void Rollback() throws Exception {
+		
+		konekcija.rollback();
 	}
 	
 	// Virtuelne funkcije

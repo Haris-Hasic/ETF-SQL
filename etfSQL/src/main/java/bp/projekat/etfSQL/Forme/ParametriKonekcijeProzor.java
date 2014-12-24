@@ -12,6 +12,7 @@ import java.awt.BorderLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 import javax.swing.JTable;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -46,7 +47,7 @@ public class ParametriKonekcijeProzor {
 
 	private JFrame frmConnect;
 	private JTextField textField_User;
-	private JTextField textField_Pass;
+	private JPasswordField textField_Pass;
 	private Konekcija kon;
 	private JTextField txtTAG;
 	private JTextField textField_Host;
@@ -82,6 +83,7 @@ public class ParametriKonekcijeProzor {
 		frmConnect.setTitle("Connect");
 		frmConnect.setBounds(100, 100, 741, 406);
 		frmConnect.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		frmConnect.setLocationRelativeTo(null); 
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(SystemColor.window);
@@ -105,7 +107,7 @@ public class ParametriKonekcijeProzor {
 		textField_User.setBounds(490, 240, 235, 20);
 		panel.add(textField_User);
 		
-		textField_Pass = new JTextField();
+		textField_Pass = new JPasswordField();
 		textField_Pass.setColumns(10);
 		textField_Pass.setBounds(490, 268, 235, 20);
 		panel.add(textField_Pass);
