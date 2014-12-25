@@ -16,6 +16,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 import javax.swing.JTextField;
 import javax.swing.JMenuItem;
@@ -25,6 +26,10 @@ import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -38,7 +43,7 @@ import java.io.FileReader;
 public class SkriptaProzor {
 
 	private JFrame frmKreirajSkriptu;
-	private JTextField textField;
+	private JTextField status_textBox;
 
 	/**
 	 * Create the application.
@@ -60,16 +65,16 @@ public class SkriptaProzor {
 		frmKreirajSkriptu.setMinimumSize(new Dimension(500, 500));
 		frmKreirajSkriptu.setLocationRelativeTo(null); 
 		
-		final JTextPane skripta_txtBox = new JTextPane();
+		final JTextArea skripta_txtBox = new JTextArea();
 		frmKreirajSkriptu.getContentPane().add(skripta_txtBox, BorderLayout.CENTER);
 		
 		JToolBar toolBar = new JToolBar();
 		frmKreirajSkriptu.getContentPane().add(toolBar, BorderLayout.SOUTH);
 		
-		textField = new JTextField();
-		textField.setEditable(false);
-		toolBar.add(textField);
-		textField.setColumns(10);
+		status_textBox = new JTextField();
+		status_textBox.setEditable(false);
+		toolBar.add(status_textBox);
+		status_textBox.setColumns(10);
 		
 		JMenuBar menuBar = new JMenuBar();
 		frmKreirajSkriptu.setJMenuBar(menuBar);
@@ -129,6 +134,8 @@ public class SkriptaProzor {
 		mntmViewDocumentation.setIcon(new ImageIcon(tempSl));
 		mntmViewDocumentation.setFont(new Font("SansSerif", Font.PLAIN, 12));
 		mnHelp.add(mntmViewDocumentation);
+		
+		frmKreirajSkriptu.setVisible(true);
 		
 		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		// Eventi menu opcija
@@ -246,8 +253,34 @@ public class SkriptaProzor {
 			}
 		});
 		//--------------------------------------------------------------------------------------------------------------------------
-        
-		frmKreirajSkriptu.setVisible(true);
-	}
+		skripta_txtBox.addCaretListener(new CaretListener() {
+			
+			public void caretUpdate(CaretEvent arg0) {
+				
+                int linenum = 1;
+                int columnnum = 1;
+
+                try {
+                	
+                    int caretpos = skripta_txtBox.getCaretPosition();
+                    linenum = skripta_txtBox.getLineOfOffset(caretpos);
+
+                    columnnum = caretpos - skripta_txtBox.getLineStartOffset(linenum);
+
+                    linenum += 1;
+                }
+                catch(Exception ex) { }
+                
+                updateStatus(linenum, columnnum);
+            }
+        });
+
+        updateStatus(1,1);
+    }
+
+	
+    private void updateStatus(int linenumber, int columnnumber) {
+    	status_textBox.setText("Line: " + linenumber + "; Column: " + columnnumber + ";");
+    }
 
 }
