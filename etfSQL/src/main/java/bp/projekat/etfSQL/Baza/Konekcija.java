@@ -101,7 +101,7 @@ public class Konekcija {
 		Konekcija.metaPodaci = metaPodaci;
 	}
 	public void setConnection(Connection connection) {
-		this.konekcija = connection;
+		Konekcija.konekcija = connection;
 	}
 	
 	public Konekcija(String k, String pass) 

@@ -58,7 +58,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.swing.border.Border;
-import javax.swing.border.TitledBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
@@ -70,7 +69,6 @@ import bp.projekat.etfSQL.Klase.ListTableModel;
 import bp.projekat.etfSQL.Klase.LoggerTableModel;
 
 import javax.swing.JCheckBox;
-import javax.swing.JTabbedPane;
 
 public class RadniProzor {
 
@@ -546,7 +544,7 @@ public class RadniProzor {
 					fd.setVisible(true);
 					String path = fd.getDirectory() + fd.getFile();
 
-					ScriptRunner runner = new ScriptRunner(kon.getKonekcija(), true, true);//konekcija, [booleanAutoCommit], [booleanStopOnerror]
+					ScriptRunner runner = new ScriptRunner(Konekcija.getKonekcija(), true, true);//konekcija, [booleanAutoCommit], [booleanStopOnerror]
 					runner.runScript(new BufferedReader(new FileReader(path)));
 					JOptionPane.showMessageDialog(null, "Skripta uspješno izvršena.");
 				}

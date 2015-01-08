@@ -2,17 +2,12 @@ package bp.projekat.etfSQL.Forme;
 
 import java.awt.Desktop;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.FileDialog;
 import java.awt.Image;
 
 import javax.swing.JFrame;
-import javax.swing.JTextPane;
-
 import java.awt.BorderLayout;
 
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
@@ -20,6 +15,7 @@ import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 import javax.swing.JTextField;
 import javax.swing.JMenuItem;
+import javax.swing.WindowConstants;
 
 import java.awt.Font;
 import java.awt.Toolkit;
@@ -28,15 +24,9 @@ import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 
@@ -61,7 +51,7 @@ public class SkriptaProzor {
 		frmKreirajSkriptu.setIconImage(Toolkit.getDefaultToolkit().getImage(SkriptaProzor.class.getResource("/bp/projekat/etfSQL/Resursi/script_icon.png")));
 		frmKreirajSkriptu.setTitle("Write Script - Untitled");
 		frmKreirajSkriptu.setBounds(100, 100, 450, 300);
-		frmKreirajSkriptu.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frmKreirajSkriptu.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		frmKreirajSkriptu.setMinimumSize(new Dimension(500, 500));
 		frmKreirajSkriptu.setLocationRelativeTo(null); 
 		
